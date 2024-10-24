@@ -1,0 +1,338 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personalize Seu PC</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Estilos gerais */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        color: #333;
+      }
+
+      /* Estilos da navbar */
+      .navbar {
+        background-color: rgb(21, 120, 227);
+        color: #fff;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+      }
+
+      .navbar h1 {
+        font-family: "Chalkduster", fangsong;
+        font-size: 2.5rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .navbar nav {
+        display: flex;
+        gap: 20px;
+        position: relative;
+        align-items: center;
+      }
+
+      .navbar a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: bold;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        position: relative;
+      }
+
+      .navbar a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .dropdown {
+        position: relative;
+      }
+
+      .submenu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: #fff;
+        color: #333;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        max-width: 200px;
+        overflow-y: auto;
+        max-height: 300px;
+      }
+
+      .submenu a {
+        color: #333;
+        display: block;
+        padding: 5px 10px;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+        white-space: nowrap;
+      }
+
+      .submenu a:hover {
+        background-color: #f0f0f0;
+      }
+
+      .dropdown:hover .submenu {
+        display: block;
+      }
+
+      /* Estilos principais */
+      .btn-compra {
+        background-color: #28a745;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      main {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .configurator {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 20px;
+      }
+
+      .component {
+        margin-bottom: 20px;
+      }
+
+      .component label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .selection {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+
+      .selection img {
+        max-width: 120px;
+        max-height: 120px;
+        transition: all 0.3s ease;
+        filter: grayscale(100%);
+      }
+
+      .selection img:hover {
+        filter: grayscale(0%);
+        transform: scale(1.1) translateY(-10px);
+      }
+
+      .selection span {
+        flex-grow: 1;
+        margin-left: 10px;
+      }
+
+      .btn-selecionar {
+        background-color: #007bff;
+        color: #fff;
+        padding: 5px 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      .btn-selecionar:hover {
+        background-color: #0056b3;
+      }
+
+      /* Estilos do botão de salvar */
+      .btn-salvar {
+        background-color: #ffc107;
+        color: #fff;
+        padding: 15px 30px;
+        border: none;
+        cursor: pointer;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn-salvar:hover {
+        background-color: #e0a800;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="navbar">
+        <h1>BuildItUp!</h1>
+        <nav>
+          <a href="#">Home</a>
+          <a href="#">Entrar/Cadastrar</a>
+          <a href="#">Sobre o Autor</a>
+          <div class="dropdown">
+            <a href="#">Peças</a>
+            <div class="submenu">
+              <a href="#">Processadores</a>
+              <a href="#">Coolers/Water-Coolers</a>
+              <a href="#">Placas de Vídeo</a>
+              <a href="#">Placas-mãe</a>
+              <a href="#">Memórias</a>
+              <a href="#">Armazenamentos</a>
+              <a href="#">Gabinetes</a>
+              <a href="#">Fontes</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="configurator">
+        <!-- Componentes do configurador -->
+        <div class="component">
+          <label>Processador</label>
+          <div class="selection">
+            <img src="{%url%}" alt="Processador" />
+            <span>Nenhum selecionado</span>
+            <button class="btn-selecionar" onclick="selecionar('Processador')">
+              Selecione
+            </button>
+          </div>
+        </div>
+
+        <div class="component">
+          <label>Placa Mãe</label>
+          <div class="selection">
+            <img src="images/placamae.jpg" alt="Placa Mãe" />
+            <span>Nenhum selecionado</span>
+            <button class="btn-selecionar" onclick="selecionar('Placa Mãe')">
+              Selecione
+            </button>
+          </div>
+        </div>
+
+        <div class="component">
+          <label>Cooler/Water Cooler</label>
+          <div class="selection">
+            <img src="images/cooler.jpg" alt="Cooler" />
+            <span>Nenhum selecionado</span>
+            <button class="btn-selecionar" onclick="selecionar('Cooler')">
+              Selecione
+            </button>
+          </div>
+        </div>
+
+        <div class="component">
+          <label>Memória RAM</label>
+          <div class="selection">
+            <img src="images/ram.jpg" alt="Memória RAM" />
+            <span>Nenhum selecionado</span>
+            <button class="btn-selecionar" onclick="selecionar('Memória RAM')">
+              Selecione
+            </button>
+          </div>
+        </div>
+
+        <div class="component">
+          <label>Placa de Vídeo</label>
+          <div class="selection">
+            <img src="images/gpu.jpg" alt="Placa de Vídeo" />
+            <span>Nenhum selecionado</span>
+            <button
+              class="btn-selecionar"
+              onclick="selecionar('Placa de Vídeo')"
+            >
+              Selecione
+            </button>
+          </div>
+        </div>
+
+        <div class="component">
+          <label>SSD</label>
+          <div class="selection">
+            <img src="images/ssd.jpg" alt="SSD" />
+            <span>Nenhum selecionado</span>
+            <button class="btn-selecionar" onclick="selecionar('SSD')">
+              Selecione
+            </button>
+          </div>
+        </div>
+
+        <div class="component">
+          <label>HD</label>
+          <div class="selection">
+            <img src="images/hd.jpg" alt="HD" />
+            <span>Nenhum selecionado</span>
+            <button class="btn-selecionar" onclick="selecionar('HD')">
+              Selecione
+            </button>
+          </div>
+        </div>
+
+        <div class="component">
+          <label>Fonte de Energia</label>
+          <div class="selection">
+            <img src="images/fonte.jpg" alt="Fonte de Energia" />
+            <span>Nenhum selecionado</span>
+            <button
+              class="btn-selecionar"
+              onclick="selecionar('Fonte de Energia')"
+            >
+              Selecione
+            </button>
+          </div>
+        </div>
+
+        <div class="component">
+          <label>Gabinete</label>
+          <div class="selection">
+            <img src="images/gabinete.jpg" alt="Gabinete" />
+            <span>Nenhum selecionado</span>
+            <button class="btn-selecionar" onclick="selecionar('Gabinete')">
+              Selecione
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Botão de Salvar Setup -->
+      <button class="btn-salvar">Salvar Setup</button>
+    </main>
+  </body>
+</html>
