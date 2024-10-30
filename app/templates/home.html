@@ -10,286 +10,139 @@
       rel="stylesheet"
     />
     <style>
-      * {
+      body {
+        font-family: "Poppins", sans-serif;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
       }
 
-      body {
-        background-color: #f5f5f5;
-        color: #333;
-      }
-
-      /* Estilos da navbar */
       .navbar {
-        background-color: rgb(21, 120, 227);
-        color: #fff;
-        padding: 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        position: relative;
-      }
-
-      .navbar h1 {
-        font-family: "Chalkduster", fangsong;
-        font-size: 2.5rem;
-        font-weight: bold;
-        letter-spacing: 1px;
+        padding: 15px 30px;
+        background-color: #333;
         color: #fff;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
 
-      .navbar nav {
-        display: flex;
-        gap: 20px;
-        position: relative;
-        align-items: center;
+      .navbar h1,
+      .navbar nav a {
+        margin: 0;
       }
 
-      .navbar a {
+      .navbar nav a {
         color: #fff;
+        margin-left: 15px;
         text-decoration: none;
-        font-size: 1rem;
-        font-weight: bold;
-        padding: 10px 15px;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-        position: relative;
-      }
-
-      .navbar a:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-      }
-
-      .dropdown {
-        position: relative;
-      }
-
-      .submenu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background-color: #fff;
-        color: #333;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        max-width: 200px;
-        overflow-y: auto;
-        max-height: 300px;
-      }
-
-      .submenu a {
-        color: #333;
-        display: block;
-        padding: 5px 10px;
-        text-decoration: none;
-        font-size: 1rem;
-        transition: background-color 0.3s ease;
-        white-space: nowrap;
-      }
-
-      .submenu a:hover {
-        background-color: #f0f0f0;
-      }
-
-      .dropdown:hover .submenu {
-        display: block;
-      }
-
-      /* Estilos principais */
-      .btn-compra {
-        background-color: #28a745;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-      }
-
-      main {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
       }
 
       .configurator {
-        background-color: #fff;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
         padding: 20px;
-        border-radius: 10px;
-        width: 100%;
-        max-width: 800px;
-        margin-bottom: 20px;
       }
 
       .component {
-        margin-bottom: 20px;
-      }
-
-      .component label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
-
-      .selection {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: #f9f9f9;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-      }
-
-      .selection img {
-        max-width: 120px;
-        max-height: 120px;
-        transition: all 0.3s ease;
-        filter: grayscale(100%);
-      }
-
-      .selection img:hover {
-        filter: grayscale(0%);
-        transform: scale(1.1) translateY(-10px);
-      }
-
-      .selection span {
-        flex-grow: 1;
-        margin-left: 10px;
-      }
-
-      .btn-selecionar {
-        background-color: #007bff;
-        color: #fff;
-        padding: 5px 10px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-      }
-
-      .btn-selecionar:hover {
-        background-color: #0056b3;
-      }
-
-      /* Estilos do botão de salvar */
-      .btn-salvar {
-        background-color: #ffc107;
-        color: #fff;
-        padding: 15px 30px;
-        border: none;
-        cursor: pointer;
-        border-radius: 10px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-      }
-
-      .btn-salvar:hover {
-        background-color: #e0a800;
-      }
-
-      /* Estilos do formulário de setup */
-      .form-setup {
-        margin-top: 20px;
         background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        width: 100%;
-        max-width: 800px;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
       }
 
-      .form-setup label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
+      .component img {
+        width: 100px;
+        height: auto;
+        margin: 10px 0;
       }
 
-      .form-setup input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-bottom: 10px;
-      }
-
-      .form-setup button {
-        width: 100%;
+      .component button {
+        padding: 10px 20px;
         background-color: #007bff;
         color: #fff;
-        padding: 10px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 1rem;
       }
 
-      .form-setup button:hover {
-        background-color: #0056b3;
-      }
       .modal {
-        display: none; /* Escondido por padrão */
+        display: none;
         position: fixed;
-        z-index: 1; /* Em cima de tudo */
+        z-index: 1;
         left: 0;
         top: 0;
-        width: 100%; /* Largura total */
-        height: 100%; /* Altura total */
-        overflow: auto; /* Habilita rolagem se necessário */
-        background-color: rgb(0, 0, 0); /* Fundo preto */
-        background-color: rgba(0, 0, 0, 0.4); /* Fundo preto com opacidade */
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
       }
 
       .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto; /* 15% do topo e centralizado */
+        background-color: #fff;
+        margin: 10% auto;
         padding: 20px;
         border: 1px solid #888;
-        width: 80%; /* Largura do modal */
+        width: 50%;
+        max-width: 600px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal h2 {
+        margin-top: 0;
+      }
+
+      .modal label {
+        display: block;
+        margin: 10px 0;
+      }
+
+      .modal input[type="radio"] {
+        margin-right: 10px;
       }
 
       .close {
         color: #aaa;
         float: right;
-        font-size: 28px;
+        font-size: 24px;
         font-weight: bold;
+        cursor: pointer;
       }
 
       .close:hover,
       .close:focus {
         color: black;
         text-decoration: none;
+      }
+
+      .modal-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .modal-buttons button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
         cursor: pointer;
       }
+
+      .modal-buttons button.cancel {
+        background-color: #dc3545;
+      }
+
+      .total-price {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 20px;
+        text-align: right;
+      }
     </style>
-    <script>
-      // Funções para abrir e fechar os modais
-      function openModal(componente) {
-        const modal = document.getElementById(componente);
-        modal.style.display = "block";
-      }
-
-      function closeModal(componente) {
-        const modal = document.getElementById(componente);
-        modal.style.display = "none";
-      }
-
-      // Fecha o modal se o usuário clicar fora dele
-      window.onclick = function (event) {
-        const modais = document.getElementsByClassName("modal");
-        for (let i = 0; i < modais.length; i++) {
-          if (event.target == modais[i]) {
-            modais[i].style.display = "none";
-          }
-        }
-      };
-    </script>
   </head>
   <body>
     <header>
@@ -315,7 +168,9 @@
               src="{% static 'img/'|add:componente|add:'.jpg' %}"
               alt="{{ componente }}"
             />
-            <span>Nenhum selecionado</span>
+            <span id="{{ componente|lower }}-selection-text"
+              >Nenhum selecionado</span
+            >
             <button
               class="btn-selecionar"
               onclick="openModal('{{ componente|lower }}-modal')"
@@ -336,19 +191,34 @@
             <form>
               {% for peca in pecas %}
               <label>
-                <input type="radio" name="pecas" value="{{ peca.id }}" />
+                <input
+                  type="radio"
+                  name="pecas_{{ componente|lower }}"
+                  value="{{ peca.id }}"
+                  data-price="{{ peca.preco }}"
+                />
                 {{ peca.nome }} - R$ {{ peca.preco }}
               </label>
               {% endfor %}
-              <button
-                type="button"
-                onclick="closeModal('{{ componente|lower }}-modal')"
-              >
-                Confirmar Seleção
-              </button>
+              <div class="modal-buttons">
+                <button
+                  type="button"
+                  class="cancel"
+                  onclick="closeModal('{{ componente|lower }}-modal')"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onclick="closeModal('{{ componente|lower }}-modal')"
+                >
+                  Confirmar Seleção
+                </button>
+              </div>
             </form>
           </div>
         </div>
+
         {% endfor %}
       </section>
 
@@ -362,16 +232,54 @@
           <button type="submit">Salvar Setup</button>
         </form>
       </section>
+
+      <div class="total-price">
+        Total: R$ <span id="total-price-value">0.00</span>
+      </div>
     </main>
 
     <script>
-      document.querySelectorAll("input[type=radio]").forEach(function (radio) {
-        radio.addEventListener("change", function () {
-          const selectedPieces = Array.from(
-            document.querySelectorAll('input[name="pecas"]:checked')
-          ).map((radio) => radio.value);
-          document.getElementById("selected-pieces").value =
-            selectedPieces.join(",");
+      function openModal(componente) {
+        const modal = document.getElementById(componente);
+        modal.style.display = "block";
+      }
+
+      function closeModal(componente) {
+        const modal = document.getElementById(componente);
+        modal.style.display = "none";
+      }
+
+      function atualizarSelecao(componente, pecaNome) {
+        const selectionText = document.getElementById(
+          componente + "-selection-text"
+        );
+        selectionText.textContent = pecaNome;
+      }
+
+      function atualizarPrecoTotal() {
+        let total = 0;
+        const selectedRadios = document.querySelectorAll(
+          "input[type='radio']:checked"
+        );
+        selectedRadios.forEach((radio) => {
+          total += parseFloat(radio.getAttribute("data-price"));
+        });
+        document.getElementById("total-price-value").textContent =
+          total.toFixed(2);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const radios = document.querySelectorAll("input[type='radio']");
+        radios.forEach((radio) => {
+          radio.addEventListener("change", function () {
+            const componente = this.name.split("_")[1];
+            const pecaNome = this.parentElement.textContent
+              .trim()
+              .split(" - ")[0];
+            atualizarSelecao(componente, pecaNome);
+            atualizarPrecoTotal();
+            closeModal(componente + "-modal");
+          });
         });
       });
     </script>
