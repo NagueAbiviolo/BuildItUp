@@ -10,6 +10,7 @@ from django.contrib.auth import (
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
+from django.db.models import Case, When, Value, CharField
 
 
 class IndexView(View):
@@ -73,7 +74,22 @@ def home(request):
 @login_required(login_url="/auth/login/")
 def pecas(request):
     order = request.GET.get("order", "asc")
-    pecas = Peca.objects.all()
+    pecas = Peca.objects.annotate(
+        tipo=Case(
+            When(ram__isnull=False, then=Value("RAM")),
+            When(hd__isnull=False, then=Value("HD")),
+            When(ssd__isnull=False, then=Value("SSD")),
+            When(gpu__isnull=False, then=Value("GPU")),
+            When(cpu__isnull=False, then=Value("CPU")),
+            When(fontealimentacao__isnull=False, then=Value("Fonte de Alimentação")),
+            When(placamae__isnull=False, then=Value("Placa Mãe")),
+            When(cooler__isnull=False, then=Value("Cooler")),
+            When(gabinete__isnull=False, then=Value("Gabinete")),
+            When(ventoinha__isnull=False, then=Value("Ventoinha")),
+            default=Value("Desconhecido"),
+            output_field=CharField(),
+        )
+    )
 
     if order == "desc":
         pecas = pecas.order_by("-preco")
@@ -83,30 +99,35 @@ def pecas(request):
     return render(request, "pecas.html", {"pecas": pecas, "order": order})
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_ram(request):
     if request.method == "POST":
         nome = request.POST["nome"]
         preco = request.POST["preco"]
         capacidade = request.POST["gb"]
         frequencia = request.POST["mhz"]
-        ram = RAM(nome=nome, preco=preco, capacidade=capacidade, frequencia=frequencia)
+        ram = RAM(nome=nome, preco=preco, gb=capacidade, mhz=frequencia)
         ram.save()
         return redirect("home")
     return render(request, "add_ram.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_hd(request):
     if request.method == "POST":
         nome = request.POST["nome"]
         preco = request.POST["preco"]
         armazenamento = request.POST["armazenamento"]
         velocidade = request.POST["velocidade"]
-        hd = HD(nome=nome, preco=preco, capacidade=armazenamento, velocidade=velocidade)
+        hd = HD(
+            nome=nome, preco=preco, armazenamento=armazenamento, velocidade=velocidade
+        )
         hd.save()
         return redirect("home")
     return render(request, "add_hd.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_ssd(request):
     if request.method == "POST":
         nome = request.POST["nome"]
@@ -121,6 +142,7 @@ def add_ssd(request):
     return render(request, "add_ssd.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_gpu(request):
     if request.method == "POST":
         nome = request.POST["nome"]
@@ -133,6 +155,7 @@ def add_gpu(request):
     return render(request, "add_gpu.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_cpu(request):
     if request.method == "POST":
         nome = request.POST["nome"]
@@ -145,6 +168,7 @@ def add_cpu(request):
     return render(request, "add_cpu.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_fonte(request):
     if request.method == "POST":
         nome = request.POST["nome"]
@@ -156,6 +180,7 @@ def add_fonte(request):
     return render(request, "add_fonte.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_placa_mae(request):
     if request.method == "POST":
         nome = request.POST["nome"]
@@ -171,6 +196,7 @@ def add_placa_mae(request):
     return render(request, "add_placa_mae.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_cooler(request):
     if request.method == "POST":
         nome = request.POST["nome"]
@@ -183,6 +209,7 @@ def add_cooler(request):
     return render(request, "add_cooler.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_gabinete(request):
     if request.method == "POST":
         nome = request.POST["nome"]
@@ -197,6 +224,7 @@ def add_gabinete(request):
     return render(request, "add_gabinete.html")
 
 
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
 def add_ventoinha(request):
     if request.method == "POST":
         nome = request.POST["nome"]
@@ -210,74 +238,133 @@ def add_ventoinha(request):
 
 
 @user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
-def editar_peca(request, peca_id):
-    peca = get_object_or_404(Peca, id=peca_id)
-    componente = None
+def editar_cpu(request, pk):
+    cpu = get_object_or_404(CPU, pk=pk)
+    if request.method == "POST":
+        cpu.nome = request.POST.get("nome")
+        cpu.preco = request.POST.get("preco")
+        cpu.nucleos = request.POST.get("nucleos")
+        cpu.clock = request.POST.get("clock")
+        cpu.chipset = request.POST.get("chipset")
+        cpu.save()
+        return redirect("pecas")
+    return render(request, "editar_cpu.html", {"cpu": cpu})
 
-    if isinstance(peca, RAM):
-        componente = get_object_or_404(RAM, id=peca.id)
-    elif isinstance(peca, HD):
-        componente = get_object_or_404(HD, id=peca.id)
-    elif isinstance(peca, SSD):
-        componente = get_object_or_404(SSD, id=peca.id)
-    elif isinstance(peca, GPU):
-        componente = get_object_or_404(GPU, id=peca.id)
-    elif isinstance(peca, CPU):
-        componente = get_object_or_404(CPU, id=peca.id)
-    elif isinstance(peca, FonteAlimentacao):
-        componente = get_object_or_404(FonteAlimentacao, id=peca.id)
-    elif isinstance(peca, PlacaMae):
-        componente = get_object_or_404(PlacaMae, id=peca.id)
-    elif isinstance(peca, Cooler):
-        componente = get_object_or_404(Cooler, id=peca.id)
-    elif isinstance(peca, Gabinete):
-        componente = get_object_or_404(Gabinete, id=peca.id)
-    elif isinstance(peca, Ventoinha):
-        componente = get_object_or_404(Ventoinha, id=peca.id)
 
-    if request.method == "GET":
-        return render(
-            request, "editar_peca.html", {"peca": peca, "componente": componente}
-        )
-    else:
-        # Atualizar os campos específicos do componente com base no tipo
-        if isinstance(componente, RAM):
-            componente.gb = request.POST.get("gb")
-            componente.mhz = request.POST.get("mhz")
-        elif isinstance(componente, HD):
-            componente.armazenamento = request.POST.get("armazenamento")
-            componente.velocidade = request.POST.get("velocidade")
-        elif isinstance(componente, SSD):
-            componente.armazenamento = request.POST.get("armazenamento")
-            componente.velocidade = request.POST.get("velocidade")
-        elif isinstance(componente, GPU):
-            componente.memoria = request.POST.get("memoria")
-            componente.clock = request.POST.get("clock")
-        elif isinstance(componente, CPU):
-            componente.nucleos = request.POST.get("nucleos")
-            componente.clock = request.POST.get("clock")
-        elif isinstance(componente, FonteAlimentacao):
-            componente.potencia = request.POST.get("potencia")
-        elif isinstance(componente, PlacaMae):
-            componente.formato = request.POST.get("formato")
-            componente.chipset = request.POST.get("chipset")
-        elif isinstance(componente, Cooler):
-            componente.tipo = request.POST.get("tipo")
-            componente.tamanho = request.POST.get("tamanho")
-        elif isinstance(componente, Gabinete):
-            componente.tipo = request.POST.get("tipo")
-            componente.compatibilidade = request.POST.get("compatibilidade")
-        elif isinstance(componente, Ventoinha):
-            componente.tamanho = request.POST.get("tamanho")
-            componente.rpm = request.POST.get("rpm")
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_ram(request, pk):
+    ram = get_object_or_404(RAM, pk=pk)
+    if request.method == "POST":
+        ram.nome = request.POST.get("nome")
+        ram.preco = request.POST.get("preco")
+        ram.gb = request.POST.get("gb")
+        ram.mhz = request.POST.get("mhz")
+        ram.save()
+        return redirect("pecas")
+    return render(request, "editar_ram.html", {"ram": ram})
 
-        # Atualizar o nome e preço da peça
-        peca.nome = request.POST.get("nome")
-        peca.preco = request.POST.get("preco")
-        componente.save()
-        peca.save()
 
-        return HttpResponseRedirect(reverse("pecas"))
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_hd(request, pk):
+    hd = get_object_or_404(HD, pk=pk)
+    if request.method == "POST":
+        hd.nome = request.POST.get("nome")
+        hd.preco = request.POST.get("preco")
+        hd.armazenamento = request.POST.get("armazenamento")
+        hd.velocidade = request.POST.get("velocidade")
+        hd.save()
+        return redirect("pecas")
+    return render(request, "editar_hd.html", {"hd": hd})
+
+
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_ssd(request, pk):
+    ssd = get_object_or_404(SSD, pk=pk)
+    if request.method == "POST":
+        ssd.nome = request.POST.get("nome")
+        ssd.preco = request.POST.get("preco")
+        ssd.armazenamento = request.POST.get("armazenamento")
+        ssd.velocidade = request.POST.get("velocidade")
+        ssd.save()
+        return redirect("pecas")
+    return render(request, "editar_ssd.html", {"ssd": ssd})
+
+
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_gpu(request, pk):
+    gpu = get_object_or_404(GPU, pk=pk)
+    if request.method == "POST":
+        gpu.nome = request.POST.get("nome")
+        gpu.preco = request.POST.get("preco")
+        gpu.memoria = request.POST.get("memoria")
+        gpu.clock = request.POST.get("clock")
+        gpu.save()
+        return redirect("pecas")
+    return render(request, "editar_gpu.html", {"gpu": gpu})
+
+
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_fonte_alimentacao(request, pk):
+    fonte = get_object_or_404(FonteAlimentacao, pk=pk)
+    if request.method == "POST":
+        fonte.nome = request.POST.get("nome")
+        fonte.preco = request.POST.get("preco")
+        fonte.potencia = request.POST.get("potencia")
+        fonte.save()
+        return redirect("pecas")
+    return render(request, "editar_fonte.html", {"fonte": fonte})
+
+
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_placa_mae(request, pk):
+    placa = get_object_or_404(PlacaMae, pk=pk)
+    if request.method == "POST":
+        placa.nome = request.POST.get("nome")
+        placa.preco = request.POST.get("preco")
+        placa.formato = request.POST.get("formato")
+        placa.chipset = request.POST.get("chipset")
+        placa.save()
+        return redirect("pecas")
+    return render(request, "editar_placa.html", {"placa": placa})
+
+
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_cooler(request, pk):
+    cooler = get_object_or_404(Cooler, pk=pk)
+    if request.method == "POST":
+        cooler.nome = request.POST.get("nome")
+        cooler.preco = request.POST.get("preco")
+        cooler.tipo = request.POST.get("tipo")
+        cooler.tamanho = request.POST.get("tamanho")
+        cooler.save()
+        return redirect("pecas")
+    return render(request, "editar_cooler.html", {"cooler": cooler})
+
+
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_gabinete(request, pk):
+    gabinete = get_object_or_404(Gabinete, pk=pk)
+    if request.method == "POST":
+        gabinete.nome = request.POST.get("nome")
+        gabinete.preco = request.POST.get("preco")
+        gabinete.tipo = request.POST.get("tipo")
+        gabinete.compatibilidade = request.POST.get("compatibilidade")
+        gabinete.save()
+        return redirect("pecas")
+    return render(request, "editar_gabinete.html", {"gabinete": gabinete})
+
+
+@user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
+def editar_ventoinha(request, pk):
+    ventoinha = get_object_or_404(Ventoinha, pk=pk)
+    if request.method == "POST":
+        ventoinha.nome = request.POST.get("nome")
+        ventoinha.preco = request.POST.get("preco")
+        ventoinha.tamanho = request.POST.get("tamanho")
+        ventoinha.rpm = request.POST.get("rpm")
+        ventoinha.save()
+        return redirect("pecas")
+    return render(request, "editar_ventoinha.html", {"ventoinha": ventoinha})
 
 
 @user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")

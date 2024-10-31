@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Cooler</title>
+  </head>
+  <body>
+    <h1>Editar Cooler</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div>
+        <label for="nome">Nome:</label>
+        <input
+          type="text"
+          id="nome"
+          name="nome"
+          value="{{ cooler.nome }}"
+          required
+        />
+      </div>
+      <div>
+        <label for="preco">Preço:</label>
+        <input
+          type="number"
+          id="preco"
+          name="preco"
+          step="0.01"
+          value="{{ cooler.preco }}"
+          required
+        />
+      </div>
+      <div>
+        <label for="tipo">Tipo:</label>
+        <input
+          type="text"
+          id="tipo"
+          name="tipo"
+          value="{{ cooler.tipo }}"
+          required
+        />
+      </div>
+      <div>
+        <label for="tamanho">Tamanho:</label>
+        <input
+          type="number"
+          id="tamanho"
+          name="tamanho"
+          value="{{ cooler.tamanho }}"
+          required
+        />
+      </div>
+      <button type="submit">Salvar</button>
+    </form>
+    <a href="{% url 'pecas' %}">Voltar</a>
+  </body>
+</html>

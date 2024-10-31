@@ -50,7 +50,8 @@ class GPU(Peca):
 class CPU(Peca):
     nucleos = models.IntegerField()  # Número de núcleos
     clock = models.FloatField()  # Frequência em GHz
-    chipset = models.CharField(max_length=100, null = True)
+    chipset = models.CharField(max_length=100, null=True)
+
     def __str__(self):
         return f"{self.nome} - {self.nucleos} Núcleos - {self.clock}GHz"
 

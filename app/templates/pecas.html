@@ -1,81 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <title>Visualizar Peças</title>
     <style>
+        /* Reset básico */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
+            background-color: #f3f4f6;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
+        
         .container {
-            max-width: 800px;
-            margin: auto;
+            max-width: 1000px;
+            width: 100%;
+            margin: 20px;
             background-color: #fff;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 10px;
         }
+        
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-container select, 
+        .filter-container button {
+            padding: 8px 12px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
         }
+
         th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: center;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
+
         th {
-            background-color: #f0f0f0;
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
         }
-        .actions a, .actions form {
-            display: inline-block;
-            margin: 0 5px;
+
+        .actions {
+            display: flex;
+            gap: 5px;
         }
-        .actions a {
+        
+        .actions a, 
+        .actions form button {
             text-decoration: none;
-            color: white;
-            padding: 5px 10px;
-            background-color: #007BFF;
-            border-radius: 4px;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+        
+        .actions a {
+            background-color: #007bff;
+        }
+
         .actions a:hover {
             background-color: #0056b3;
         }
+
         .actions form button {
-            background-color: #FF6347;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
+            background-color: #dc3545;
         }
+
         .actions form button:hover {
-            background-color: #d9534f;
+            background-color: #c82333;
         }
+
         .add-button {
-            display: block;
-            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
             margin-top: 20px;
         }
+
         .add-button a {
+            display: inline-block;
             text-decoration: none;
-            color: white;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            border-radius: 4px;
+            color: #fff;
+            padding: 10px 15px;
+            background-color: #28a745;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
         }
+
         .add-button a:hover {
-            background-color: #45a049;
+            background-color: #218838;
         }
-        .filter-container {
-            margin-bottom: 20px;
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            th, td {
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
@@ -110,7 +171,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Nome</th>
-                    <th>Componente</th>
+                    <th>Tipo de Componente</th>
                     <th>Preço</th>
                     {% if user.is_staff %}
                     <th>Ações</th>
@@ -122,17 +183,40 @@
                 <tr>
                     <td>{{ peca.id }}</td>
                     <td>{{ peca.nome }}</td>
-                    <td>{{ peca.componente.nome }}</td>
+                    <td>{{ peca.tipo }}</td> <!-- Usando o método para exibir o tipo de componente -->
                     <td>R$ {{ peca.preco }}</td>
                     <td class="actions">
                         {% if user.is_staff %}
-                            <a href="{% url 'editar_peca' peca.id %}">Editar</a>
-                            <form method="POST" action="{% url 'excluir_peca' peca.id %}" onsubmit="return confirm('Tem certeza que deseja excluir esta peça?');">
+                            {% if peca.tipo == 'CPU' %}
+                                <a href="{% url 'editar_cpu' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'RAM' %}
+                                <a href="{% url 'editar_ram' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'HD' %}
+                                <a href="{% url 'editar_hd' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'SSD' %}
+                                <a href="{% url 'editar_ssd' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'GPU' %}
+                                <a href="{% url 'editar_gpu' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'Fonte de Alimentação' %}
+                                <a href="{% url 'editar_fonte' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'Placa Mãe' %}
+                                <a href="{% url 'editar_placa' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'Cooler' %}
+                                <a href="{% url 'editar_cooler' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'Gabinete' %}
+                                <a href="{% url 'editar_gabinete' peca.id %}">Editar</a>
+                            {% elif peca.tipo == 'Ventoinha' %}
+                                <a href="{% url 'editar_ventoinha' peca.id %}">Editar</a>
+                            {% endif %}
+                            
+                            <form method="POST" action="{% url 'excluir_peca' peca.id %}" onsubmit="return confirm('Tem certeza que deseja excluir esta peça?');" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit">Excluir</button>
                             </form>
                         {% endif %}
                     </td>
+                    
+                    
                 </tr>
                 {% empty %}
                 <tr>
@@ -144,7 +228,17 @@
 
         {% if user.is_staff %}
         <div class="add-button">
-            <a href="{% url 'add_peca' %}">Adicionar Nova Peça</a>
+            <h2>Adicionar Peça</h2>
+            <a href="{% url 'add_ram' %}">Adicionar RAM</a>
+            <a href="{% url 'add_hd' %}">Adicionar HD</a>
+            <a href="{% url 'add_ssd' %}">Adicionar SSD</a>
+            <a href="{% url 'add_gpu' %}">Adicionar GPU</a>
+            <a href="{% url 'add_cpu' %}">Adicionar CPU</a>
+            <a href="{% url 'add_fonte' %}">Adicionar Fonte de Alimentação</a>
+            <a href="{% url 'add_placa_mae' %}">Adicionar Placa Mãe</a>
+            <a href="{% url 'add_cooler' %}">Adicionar Cooler</a>
+            <a href="{% url 'add_gabinete' %}">Adicionar Gabinete</a>
+            <a href="{% url 'add_ventoinha' %}">Adicionar Ventoinha</a>
         </div>
         {% endif %}
     </div>
