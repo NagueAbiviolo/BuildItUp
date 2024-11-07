@@ -10,7 +10,7 @@ from django.contrib.auth import (
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
-from django.db.models import Case, When, Value, CharField
+from django.db.models import Case, When, Value, CharField, Sum
 
 
 class IndexView(View):
@@ -58,15 +58,36 @@ def logout(request):
 @login_required(login_url="/auth/login/")
 def home(request):
     if request.method == "GET":
-        pecas = Peca.objects.all()
-        return render(request, "home.html", {"pecas": pecas})
-    else:
+        pecas_por_categoria = {
+            "RAM": RAM.objects.all(),
+            "HD": HD.objects.all(),
+            "SSD": SSD.objects.all(),
+            "GPU": GPU.objects.all(),
+            "CPU": CPU.objects.all(),
+            "Fonte de Alimentação": FonteAlimentacao.objects.all(),
+            "Placa Mãe": PlacaMae.objects.all(),
+            "Cooler": Cooler.objects.all(),
+            "Gabinete": Gabinete.objects.all(),
+            "Ventoinha": Ventoinha.objects.all(),
+        }
+        return render(request, "home.html", {"componentes": pecas_por_categoria})
+
+    elif request.method == "POST":
         nome = request.POST.get("setup_name")
         peca_ids = request.POST.getlist("pecas")
 
-        setup = Setup(nome=nome)
-        setup.save()
-        setup.pecas.set(peca_ids)
+        if not nome or not peca_ids:
+            return render(request, "home.html", {"error": "Nome do setup ou peças não fornecidos."})
+
+        pecas_selecionadas = Peca.objects.filter(id__in=peca_ids)
+
+        if not pecas_selecionadas.exists():
+            return render(request, "home.html", {"error": "Nenhuma peça encontrada com os IDs fornecidos."})
+
+        preco_total = pecas_selecionadas.aggregate(total_preco=Sum('preco'))['total_preco'] or 0
+
+        setup = Setup.objects.create(nome=nome, preco=preco_total)
+        setup.pecas.set(pecas_selecionadas)
 
         return redirect("home")
 
@@ -135,7 +156,7 @@ def add_ssd(request):
         armazenamento = request.POST["armazenamento"]
         velocidade = request.POST["velocidade"]
         ssd = SSD(
-            nome=nome, preco=preco, capacidade=armazenamento, velocidade=velocidade
+            nome=nome, preco=preco, armazenamento=armazenamento, velocidade=velocidade
         )
         ssd.save()
         return redirect("home")
@@ -185,12 +206,9 @@ def add_placa_mae(request):
     if request.method == "POST":
         nome = request.POST["nome"]
         preco = request.POST["preco"]
-        socket = request.POST["socket"]
         formato = request.POST["formato"]
         chipset = request.POST["chipset"]
-        placa_mae = PlacaMae(
-            nome=nome, preco=preco, socket=socket, formato=formato, chipset=chipset
-        )
+        placa_mae = PlacaMae(nome=nome, preco=preco, formato=formato, chipset=chipset)
         placa_mae.save()
         return redirect("home")
     return render(request, "add_placa_mae.html")
@@ -215,9 +233,10 @@ def add_gabinete(request):
         nome = request.POST["nome"]
         preco = request.POST["preco"]
         tipo = request.POST["tipo"]
-        compatibilidade = request.POST["compatibilidade"]
         gabinete = Gabinete(
-            nome=nome, preco=preco, tipo=tipo, compatibilidade=compatibilidade
+            nome=nome,
+            preco=preco,
+            tipo=tipo,
         )
         gabinete.save()
         return redirect("home")
