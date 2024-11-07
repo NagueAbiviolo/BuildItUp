@@ -1,4 +1,4 @@
-{% load static %}
+{% load static%}
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -10,13 +10,13 @@
       rel="stylesheet"
     />
     <style>
+      /* Estilos personalizados */
       body {
         font-family: "Poppins", sans-serif;
         margin: 0;
         padding: 0;
         background-color: #f4f4f4;
       }
-
       .navbar {
         display: flex;
         justify-content: space-between;
@@ -25,25 +25,21 @@
         background-color: #333;
         color: #fff;
       }
-
       .navbar h1,
       .navbar nav a {
         margin: 0;
       }
-
       .navbar nav a {
         color: #fff;
         margin-left: 15px;
         text-decoration: none;
       }
-
       .configurator {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
         padding: 20px;
       }
-
       .component {
         background-color: #fff;
         padding: 15px;
@@ -51,13 +47,11 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         text-align: center;
       }
-
       .component img {
         width: 100px;
         height: auto;
         margin: 10px 0;
       }
-
       .component button {
         padding: 10px 20px;
         background-color: #007bff;
@@ -66,7 +60,6 @@
         border-radius: 5px;
         cursor: pointer;
       }
-
       .modal {
         display: none;
         position: fixed;
@@ -78,7 +71,6 @@
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.6);
       }
-
       .modal-content {
         background-color: #fff;
         margin: 10% auto;
@@ -89,20 +81,6 @@
         border-radius: 8px;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
       }
-
-      .modal h2 {
-        margin-top: 0;
-      }
-
-      .modal label {
-        display: block;
-        margin: 10px 0;
-      }
-
-      .modal input[type="radio"] {
-        margin-right: 10px;
-      }
-
       .close {
         color: #aaa;
         float: right;
@@ -110,32 +88,19 @@
         font-weight: bold;
         cursor: pointer;
       }
-
       .close:hover,
       .close:focus {
         color: black;
         text-decoration: none;
       }
-
       .modal-buttons {
         display: flex;
         justify-content: flex-end;
         gap: 10px;
       }
-
-      .modal-buttons button {
-        padding: 10px 20px;
-        background-color: #28a745;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      .modal-buttons button.cancel {
+      .remove-button {
         background-color: #dc3545;
       }
-
       .total-price {
         font-size: 24px;
         font-weight: bold;
@@ -151,9 +116,7 @@
         <nav>
           <a href="{% url 'logout' %}">Sair</a>
           <a href="#">Sobre o Autor</a>
-          <div class="dropdown">
-            <a href="{% url 'pecas' %}">Peças</a>
-          </div>
+          <a href="{% url 'pecas' %}">Peças</a>
         </nav>
       </div>
     </header>
@@ -177,6 +140,12 @@
             >
               Selecione
             </button>
+            <button
+              class="remove-button"
+              onclick="removerSelecao('{{ componente|lower }}')"
+            >
+              Remover Seleção
+            </button>
           </div>
         </div>
 
@@ -196,35 +165,24 @@
                   name="pecas_{{ componente|lower }}"
                   value="{{ peca.id }}"
                   data-price="{{ peca.preco }}"
+                  onchange="selecionarPeca('{{ componente|lower }}', '{{ peca.nome }}', '{{ peca.preco }}', '{{ peca.id }}')"
                 />
                 {{ peca.nome }} - R$ {{ peca.preco }}
               </label>
               {% endfor %}
-              <div class="modal-buttons">
-                <button
-                  type="button"
-                  class="cancel"
-                  onclick="closeModal('{{ componente|lower }}-modal')"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onclick="closeModal('{{ componente|lower }}-modal')"
-                >
-                  Confirmar Seleção
-                </button>
-              </div>
             </form>
           </div>
         </div>
-
         {% endfor %}
       </section>
 
       <section class="form-setup">
         <h2>Adicionar um Setup</h2>
-        <form method="POST" action="{% url 'home' %}">
+        <form
+          method="POST"
+          action="{% url 'home' %}"
+          onsubmit="prepararEnvio()"
+        >
           {% csrf_token %}
           <label for="setup-name">Nome do Setup</label>
           <input type="text" id="setup-name" name="setup_name" required />
@@ -239,21 +197,46 @@
     </main>
 
     <script>
+      let selectedPieceIds = [];
+
       function openModal(componente) {
-        const modal = document.getElementById(componente);
-        modal.style.display = "block";
+        document.getElementById(componente).style.display = "block";
       }
 
       function closeModal(componente) {
-        const modal = document.getElementById(componente);
-        modal.style.display = "none";
+        document.getElementById(componente).style.display = "none";
+      }
+
+      function selecionarPeca(componente, nome, preco, id) {
+        atualizarSelecao(componente, nome);
+
+        if (!selectedPieceIds.includes(id)) {
+          selectedPieceIds.push(id);
+        }
+
+        atualizarPrecoTotal();
+        closeModal(componente + "-modal");
+      }
+
+      function removerSelecao(componente) {
+        const radio = document.querySelector(
+          `input[name="pecas_${componente}"]:checked`
+        );
+        if (radio) {
+          const id = parseInt(radio.value);
+          radio.checked = false;
+          selectedPieceIds = selectedPieceIds.filter(
+            (pieceId) => pieceId !== id
+          );
+        }
+
+        atualizarSelecao(componente, "Nenhum selecionado");
+        atualizarPrecoTotal();
       }
 
       function atualizarSelecao(componente, pecaNome) {
-        const selectionText = document.getElementById(
-          componente + "-selection-text"
-        );
-        selectionText.textContent = pecaNome;
+        document.getElementById(componente + "-selection-text").textContent =
+          pecaNome;
       }
 
       function atualizarPrecoTotal() {
@@ -268,20 +251,10 @@
           total.toFixed(2);
       }
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const radios = document.querySelectorAll("input[type='radio']");
-        radios.forEach((radio) => {
-          radio.addEventListener("change", function () {
-            const componente = this.name.split("_")[1];
-            const pecaNome = this.parentElement.textContent
-              .trim()
-              .split(" - ")[0];
-            atualizarSelecao(componente, pecaNome);
-            atualizarPrecoTotal();
-            closeModal(componente + "-modal");
-          });
-        });
-      });
+      function prepararEnvio() {
+        document.getElementById("selected-pieces").value =
+          selectedPieceIds.join(",");
+      }
     </script>
   </body>
 </html>

@@ -18,6 +18,7 @@ urlpatterns = [
     path("add_gabinete/", views.add_gabinete, name="add_gabinete"),
     path("add_ventoinha/", views.add_ventoinha, name="add_ventoinha"),
     path("editar/cpu/<int:pk>/", views.editar_cpu, name="editar_cpu"),
+    path("editar/ram/<int:pk>/", views.editar_ram, name="editar_ram"),
     path("editar/hd/<int:pk>/", views.editar_hd, name="editar_hd"),
     path("editar/ssd/<int:pk>/", views.editar_ssd, name="editar_ssd"),
     path("editar/gpu/<int:pk>/", views.editar_gpu, name="editar_gpu"),
