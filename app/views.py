@@ -74,27 +74,47 @@ def home(request):
 
     elif request.method == "POST":
         nome = request.POST.get("setup_name")
-        peca_ids = request.POST.getlist("pecas")
+        pecas_selecionadas = request.POST.get("pecas", "")
 
-        if not nome or not peca_ids:
-            return render(request, "home.html", {"error": "Nome do setup ou peças não fornecidos."})
+        if not nome or not pecas_selecionadas:
+            return render(
+                request,
+                "home.html",
+                {"error": "Nome do setup ou peças não fornecidos."},
+            )
 
-        pecas_selecionadas = Peca.objects.filter(id__in=peca_ids)
+            # Converte a string com IDs separados por vírgulas para uma lista de inteiros
+        try:
+            peca_ids = [int(id) for id in pecas_selecionadas.split(",")]
+        except ValueError:
+            return render(request, "home.html", {"error": "IDs das peças inválidos."})
 
-        if not pecas_selecionadas.exists():
-            return render(request, "home.html", {"error": "Nenhuma peça encontrada com os IDs fornecidos."})
+            # Busca as peças selecionadas no banco de dados
+        pecas = Peca.objects.filter(id__in=peca_ids)
 
-        preco_total = pecas_selecionadas.aggregate(total_preco=Sum('preco'))['total_preco'] or 0
+        if not pecas.exists():
+            return render(
+                request,
+                "home.html",
+                {"error": "Nenhuma peça encontrada com os IDs fornecidos."},
+            )
 
-        setup = Setup.objects.create(nome=nome, preco=preco_total)
-        setup.pecas.set(pecas_selecionadas)
+        preco_total = pecas.aggregate(total_preco=Sum("preco"))["total_preco"] or 0
 
-        return redirect("home")
+        setup = Setup.objects.create(nome=nome, preco=preco_total, user=request.user)
+
+        setup.pecas.set(pecas)
+
+        return redirect("meus_setups")
+
+    return render(request, "home.html")
 
 
 @login_required(login_url="/auth/login/")
 def pecas(request):
     order = request.GET.get("order", "asc")
+    componente_selecionado = request.GET.get("componente", "")
+
     pecas = Peca.objects.annotate(
         tipo=Case(
             When(ram__isnull=False, then=Value("RAM")),
@@ -112,12 +132,40 @@ def pecas(request):
         )
     )
 
+    # Aplicar o filtro por componente, se um foi selecionado
+    if componente_selecionado:
+        pecas = pecas.filter(tipo=componente_selecionado)
+
+    # Ordenar pelo preço
     if order == "desc":
         pecas = pecas.order_by("-preco")
     else:
         pecas = pecas.order_by("preco")
 
-    return render(request, "pecas.html", {"pecas": pecas, "order": order})
+    # Listar os tipos únicos de componentes para o dropdown no template
+    tipos_componentes = [
+        "RAM",
+        "HD",
+        "SSD",
+        "GPU",
+        "CPU",
+        "Fonte de Alimentação",
+        "Placa Mãe",
+        "Cooler",
+        "Gabinete",
+        "Ventoinha",
+    ]
+
+    return render(
+        request,
+        "pecas.html",
+        {
+            "pecas": pecas,
+            "order": order,
+            "componentes": tipos_componentes,
+            "componente_selecionado": componente_selecionado,
+        },
+    )
 
 
 @user_passes_test(lambda user: user.is_staff, login_url="/auth/login/")
@@ -391,3 +439,12 @@ def excluir_peca(request, peca_id):
     peca = get_object_or_404(Peca, id=peca_id)
     peca.delete()
     return HttpResponseRedirect(reverse("pecas"))
+
+
+@login_required(login_url="/auth/login/")
+def meus_setups(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    setups = Setup.objects.filter(user=request.user)
+    return render(request, "meus_setups.html", {"setups": setups})

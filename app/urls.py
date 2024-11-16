@@ -28,4 +28,5 @@ urlpatterns = [
     path("editar/gabinete/<int:pk>/", views.editar_gabinete, name="editar_gabinete"),
     path("editar/ventoinha/<int:pk>/", views.editar_ventoinha, name="editar_ventoinha"),
     path("pecas/excluir/<int:peca_id>/", views.excluir_peca, name="excluir_peca"),
+    path("meus_setups/", views.meus_setups, name="meus_setups"),
 ]
