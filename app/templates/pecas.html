@@ -145,16 +145,17 @@
         <h1>Visualizar Peças</h1>
 
         <div class="filter-container">
+            <h3><a href="{%url 'home'%}">Home</a></h3>
             <form method="GET" action="{% url 'pecas' %}">
                 <label for="componente">Filtrar por Componente:</label>
-                <select name="componente" id="componente">
-                    <option value="">Todos</option>
-                    {% for componente in componentes %}
-                        <option value="{{ componente.id }}" {% if componente.id|stringformat:"s" == componente_selecionado %}selected{% endif %}>
-                            {{ componente.nome }}
-                        </option>
-                    {% endfor %}
-                </select>
+                    <select name="componente" id="componente">
+                        <option value="">Todos</option>
+                        {% for componente in componentes %}
+                            <option value="{{ componente }}" {% if componente == componente_selecionado %}selected{% endif %}>
+                                {{ componente }}
+                            </option>
+                        {% endfor %}
+                    </select>
 
                 <label for="order">Ordenar por Preço:</label>
                 <select name="order" id="order">
@@ -169,7 +170,9 @@
         <table>
             <thead>
                 <tr>
+                    {% if user.is_staff %}
                     <th>ID</th>
+                    {% endif %}
                     <th>Nome</th>
                     <th>Tipo de Componente</th>
                     <th>Preço</th>
@@ -181,9 +184,11 @@
             <tbody>
                 {% for peca in pecas %}
                 <tr>
+                    {% if user.is_staff %}
                     <td>{{ peca.id }}</td>
+                    {% endif %}
                     <td>{{ peca.nome }}</td>
-                    <td>{{ peca.tipo }}</td> <!-- Usando o método para exibir o tipo de componente -->
+                    <td>{{ peca.tipo }}</td>
                     <td>R$ {{ peca.preco }}</td>
                     <td class="actions">
                         {% if user.is_staff %}

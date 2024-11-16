@@ -1,9 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Peca(models.Model):
     nome = models.CharField(max_length=100)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
+    tdp = models.IntegerField(null=True)
 
     def __str__(self):
         return self.nome
@@ -93,6 +95,7 @@ class Setup(models.Model):
     nome = models.CharField(max_length=100)
     pecas = models.ManyToManyField(Peca)
     preco = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.nome
+        return f"{self.nome} - {self.user}"
