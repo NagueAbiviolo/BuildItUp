@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meus Setups</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Estilos personalizados */
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 30px;
+        background-color: #333;
+        color: #fff;
+      }
+      .navbar h1,
+      .navbar nav a {
+        margin: 0;
+      }
+      .navbar nav a {
+        color: #fff;
+        margin-left: 15px;
+        text-decoration: none;
+      }
+      .setups-list {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+      }
+      .setup-card {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .setup-card h3 {
+        margin-top: 0;
+      }
+      .setup-card ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      .setup-card ul li {
+        margin: 5px 0;
+      }
+      .setup-card .preco {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="navbar">
+        <h1>BuildItUp!</h1>
+        <nav>
+          <a href="{% url 'home'%}">Home</a>
+          <a href="{% url 'logout' %}">Sair</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="setups-list">
+        {% for setup in setups %}
+        <div class="setup-card">
+          <h3>{{ setup.nome }}</h3>
+          <ul>
+            {% for peca in setup.pecas.all %}
+            <li>{{ peca.nome }} - R$ {{ peca.preco }}</li>
+            {% endfor %}
+          </ul>
+          <div class="preco">Total: R$ {{ setup.preco }}</div>
+        </div>
+        {% empty %}
+        <p>Você não tem setups ainda. Comece a montar um!</p>
+        {% endfor %}
+      </section>
+    </main>
+  </body>
+</html>
