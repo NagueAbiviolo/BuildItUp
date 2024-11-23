@@ -1,4 +1,5 @@
-{% load static%}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -6,106 +7,177 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personalize Seu PC</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
     />
     <style>
-      /* Estilos personalizados */
       body {
         font-family: "Poppins", sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f4f4f4;
+        background-color: #f9f9f9;
+        color: #222;
       }
       .navbar {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 15px 30px;
-        background-color: #333;
-        color: #fff;
+        background-color: #1e293b;
+        color: #f8fafc;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
-      .navbar h1,
-      .navbar nav a {
+      .navbar h1 {
         margin: 0;
+        font-size: 1.5rem;
+        font-weight: bold;
       }
       .navbar nav a {
-        color: #fff;
-        margin-left: 15px;
+        color: #f8fafc;
+        margin-left: 20px;
         text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 5px 10px;
+        border-radius: 4px;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      .navbar nav a:hover {
+        background-color: #3b82f6;
+        color: #fff;
       }
       .configurator {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        padding: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        padding: 30px;
       }
       .component {
         background-color: #fff;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .component:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
       }
       .component img {
-        width: 100px;
+        width: 150px;
         height: auto;
-        margin: 10px 0;
+        margin: 15px 0;
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
       }
       .component button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: #fff;
+        padding: 10px 15px;
+        margin: 5px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
         border: none;
-        border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      .component .btn-selecionar {
+        background-color: #3b82f6;
+        color: #fff;
+      }
+      .component .btn-selecionar:hover {
+        background-color: #2563eb;
+      }
+      .component .remove-button {
+        background-color: #ef4444;
+        color: #fff;
+      }
+      .component .remove-button:hover {
+        background-color: #b91c1c;
       }
       .modal {
         display: none;
         position: fixed;
-        z-index: 1;
-        left: 0;
         top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
         background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        overflow: auto;
       }
       .modal-content {
-        background-color: #fff;
-        margin: 10% auto;
+        background-color: #f8fafc;
+        margin: 5% auto;
         padding: 20px;
-        border: 1px solid #888;
-        width: 50%;
+        width: 90%;
         max-width: 600px;
-        border-radius: 8px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 15px;
+      }
+      .modal-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
       }
       .close {
-        color: #aaa;
-        float: right;
+        color: #6b7280;
         font-size: 24px;
         font-weight: bold;
         cursor: pointer;
+        transition: color 0.3s ease;
       }
-      .close:hover,
-      .close:focus {
-        color: black;
-        text-decoration: none;
+      .close:hover {
+        color: #1f2937;
       }
-      .modal-buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
+      .modal-body {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 10px;
       }
-      .remove-button {
-        background-color: #dc3545;
+      .modal-body label {
+        display: block;
+        margin: 10px 0;
+        font-size: 1rem;
+        cursor: pointer;
       }
       .total-price {
-        font-size: 24px;
+        font-size: 1.5rem;
         font-weight: bold;
-        margin: 20px;
+        margin: 30px;
         text-align: right;
+        color: #334155;
+      }
+      .form-setup {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin: 30px;
+      }
+      .form-setup input,
+      .form-setup button {
+        width: 100%;
+        padding: 12px;
+        margin: 12px 0;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+      }
+      .form-setup button {
+        background-color: #10b981;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      .form-setup button:hover {
+        background-color: #059669;
       }
     </style>
   </head>
@@ -116,7 +188,7 @@
         <nav>
           <a href="{% url 'logout' %}">Sair</a>
           <a href="#">Sobre o Autor</a>
-          <a href="{%url 'meus_setups'%}">Meus Setups</a>
+          <a href="{% url 'meus_setups' %}">Meus Setups</a>
           <a href="{% url 'pecas' %}">Peças</a>
         </nav>
       </div>
@@ -127,51 +199,53 @@
         {% for componente, pecas in componentes.items %}
         <div class="component">
           <label>{{ componente }}</label>
-          <div class="selection">
-            <img
-              src="{% static 'img/'|add:componente|add:'.jpg' %}"
-              alt="{{ componente }}"
-            />
-            <span id="{{ componente|lower }}-selection-text"
-              >Nenhum selecionado</span
-            >
-            <button
-              class="btn-selecionar"
-              onclick="openModal('{{ componente|lower }}-modal')"
-            >
-              Selecione
-            </button>
-            <button
-              class="remove-button"
-              onclick="removerSelecao('{{ componente|lower }}')"
-            >
-              Remover Seleção
-            </button>
-          </div>
+          <img
+            src="{% static 'img/'|add:componente|add:'.jpg' %}"
+            alt="{{ componente }}"
+          />
+          <span id="{{ componente|lower }}-selection-text"
+            >Nenhum selecionado</span
+          >
+          <button
+            class="btn-selecionar"
+            onclick="openModal('{{ componente|lower }}-modal')"
+          >
+            Selecione
+          </button>
+          <button
+            class="remove-button"
+            onclick="removerSelecao('{{ componente|lower }}')"
+          >
+            Remover Seleção
+          </button>
         </div>
 
         <div id="{{ componente|lower }}-modal" class="modal">
           <div class="modal-content">
-            <span
-              class="close"
-              onclick="closeModal('{{ componente|lower }}-modal')"
-              >&times;</span
-            >
-            <h2>Selecione um {{ componente }}</h2>
-            <form>
+            <div class="modal-header">
+              <h2>Selecione um {{ componente }}</h2>
+              <span
+                class="close"
+                onclick="closeModal('{{ componente|lower }}-modal')"
+                >&times;</span
+              >
+            </div>
+            <div class="modal-body">
               {% for peca in pecas %}
               <label>
                 <input
                   type="radio"
+                  id="peca_{{ peca.id }}"
                   name="pecas_{{ componente|lower }}"
                   value="{{ peca.id }}"
                   data-price="{{ peca.preco }}"
-                  onchange="selecionarPeca('{{ componente|lower }}', '{{ peca.nome }}', '{{ peca.preco }}', '{{ peca.id }}')"
+                  data-tdp="{{ peca.tdp }}"
+                  onchange="selecionarPeca('{{ componente|lower }}', '{{ peca.nome }}', '{{ peca.preco }}', '{{ peca.id }}', '{{ peca.tdp }}')"
                 />
-                {{ peca.nome }} - R$ {{ peca.preco }}
+                {{ peca.nome }} - R$ {{ peca.preco }} - TDP: {{ peca.tdp }}W
               </label>
               {% endfor %}
-            </form>
+            </div>
           </div>
         </div>
         {% endfor %}
@@ -195,6 +269,27 @@
       <div class="total-price">
         Total: R$ <span id="total-price-value">0.00</span>
       </div>
+      <div class="total-tdp">
+        TDP Total: <span id="total-tdp-value">0</span> W
+      </div>
+
+      <div class="setup-info">
+        {% if setup_atual %}
+
+        <div class="recommended-sources">
+          <h3>Fontes de Alimentação Recomendadas:</h3>
+          <ul>
+            {% for fonte in fontes_compativeis %}
+            <li>{{ fonte.nome }} - {{ fonte.potencia }}W</li>
+            {% empty %}
+            <li>
+              Não há fontes de alimentação compatíveis com o TDP do seu setup.
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
     </main>
 
     <script>
@@ -208,31 +303,36 @@
         document.getElementById(componente).style.display = "none";
       }
 
-      function selecionarPeca(componente, nome, preco, id) {
-        atualizarSelecao(componente, nome);
-
-        if (!selectedPieceIds.includes(id)) {
-          selectedPieceIds.push(id);
-        }
-
-        atualizarPrecoTotal();
-        closeModal(componente + "-modal");
-      }
-
-      function removerSelecao(componente) {
-        const radio = document.querySelector(
+      function selecionarPeca(componente, nome, preco, id, tdp) {
+        // Desmarcar qualquer peça previamente selecionada
+        const radioAnterior = document.querySelector(
           `input[name="pecas_${componente}"]:checked`
         );
-        if (radio) {
-          const id = parseInt(radio.value);
-          radio.checked = false;
+
+        if (radioAnterior) {
+          // Desmarcar a peça anterior
+          radioAnterior.checked = false;
+          const idAnterior = parseInt(radioAnterior.value);
           selectedPieceIds = selectedPieceIds.filter(
-            (pieceId) => pieceId !== id
+            (pieceId) => pieceId !== idAnterior
           );
+          atualizarSelecao(componente, "Nenhum selecionado"); // Atualiza a seleção para "Nenhum selecionado"
         }
 
-        atualizarSelecao(componente, "Nenhum selecionado");
+        // Marcar a nova peça como selecionada
+        const novoRadio = document.querySelector(
+          `input[name="pecas_${componente}"][value="${id}"]`
+        );
+        if (novoRadio) {
+          novoRadio.checked = true;
+          selectedPieceIds.push(id); // Adiciona a nova peça ao array
+        }
+
+        // Atualizar a interface do usuário
+        atualizarSelecao(componente, nome);
         atualizarPrecoTotal();
+        atualizarTDP();
+        closeModal(componente + "-modal");
       }
 
       function atualizarSelecao(componente, pecaNome) {
@@ -250,6 +350,17 @@
         });
         document.getElementById("total-price-value").textContent =
           total.toFixed(2);
+      }
+
+      function atualizarTDP() {
+        let totalTDP = 0;
+        const selectedRadios = document.querySelectorAll(
+          "input[type='radio']:checked"
+        );
+        selectedRadios.forEach((radio) => {
+          totalTDP += parseInt(radio.getAttribute("data-tdp"));
+        });
+        document.getElementById("total-tdp-value").textContent = totalTDP;
       }
 
       function prepararEnvio() {
