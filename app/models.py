@@ -1,11 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 
 class Peca(models.Model):
     nome = models.CharField(max_length=100)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
-    tdp = models.IntegerField(null=True)
+    tdp = models.IntegerField(default=0)
 
     def __str__(self):
         return self.nome
@@ -55,6 +56,9 @@ class CPU(Peca):
 class FonteAlimentacao(Peca):
     potencia = models.IntegerField()
 
+    def is_compatível(self, tdp_total):
+        return self.potencia > tdp_total + 50
+
     def __str__(self):
         return f"{self.nome} - {self.potencia}W"
 
@@ -96,6 +100,7 @@ class Setup(models.Model):
     pecas = models.ManyToManyField(Peca)
     preco = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tdp_total = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.nome} - {self.user}"

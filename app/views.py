@@ -58,19 +58,41 @@ def logout(request):
 @login_required(login_url="/auth/login/")
 def home(request):
     if request.method == "GET":
+        # Obter peças por categoria
         pecas_por_categoria = {
             "RAM": RAM.objects.all(),
             "HD": HD.objects.all(),
             "SSD": SSD.objects.all(),
             "GPU": GPU.objects.all(),
             "CPU": CPU.objects.all(),
-            "Fonte de Alimentação": FonteAlimentacao.objects.all(),
-            "Placa Mãe": PlacaMae.objects.all(),
+            "Fonte de Alimentacao": FonteAlimentacao.objects.all(),
+            "Placa Mae": PlacaMae.objects.all(),
             "Cooler": Cooler.objects.all(),
             "Gabinete": Gabinete.objects.all(),
             "Ventoinha": Ventoinha.objects.all(),
         }
-        return render(request, "home.html", {"componentes": pecas_por_categoria})
+
+        # Obter o setup do usuário
+        setups = Setup.objects.filter(user=request.user)
+        setup_atual = setups.first()
+
+        # Calcular o TDP total
+        tdp_total = 0
+        if setup_atual:
+            tdp_total = setup_atual.tdp_total  # Já calculado previamente
+
+        # Buscar fontes compatíveis
+        fontes_compativeis = FonteAlimentacao.objects.filter(
+            potencia__gte=tdp_total + 50
+        )
+
+        context = {
+            "componentes": pecas_por_categoria,
+            "setup_atual": setup_atual,
+            "tdp_total": tdp_total,
+            "fontes_compativeis": fontes_compativeis,
+        }
+        return render(request, "home.html", context)
 
     elif request.method == "POST":
         nome = request.POST.get("setup_name")
@@ -83,13 +105,13 @@ def home(request):
                 {"error": "Nome do setup ou peças não fornecidos."},
             )
 
-            # Converte a string com IDs separados por vírgulas para uma lista de inteiros
+        # Converte a string com IDs separados por vírgulas para uma lista de inteiros
         try:
             peca_ids = [int(id) for id in pecas_selecionadas.split(",")]
         except ValueError:
             return render(request, "home.html", {"error": "IDs das peças inválidos."})
 
-            # Busca as peças selecionadas no banco de dados
+        # Busca as peças selecionadas no banco de dados
         pecas = Peca.objects.filter(id__in=peca_ids)
 
         if not pecas.exists():
@@ -99,10 +121,16 @@ def home(request):
                 {"error": "Nenhuma peça encontrada com os IDs fornecidos."},
             )
 
+        # Calcular o preço total e TDP total das peças selecionadas
         preco_total = pecas.aggregate(total_preco=Sum("preco"))["total_preco"] or 0
+        tdp_total = pecas.aggregate(total_tdp=Sum("tdp"))["total_tdp"] or 0
 
-        setup = Setup.objects.create(nome=nome, preco=preco_total, user=request.user)
+        # Criar o setup
+        setup = Setup.objects.create(
+            nome=nome, preco=preco_total, tdp_total=tdp_total, user=request.user
+        )
 
+        # Adicionar as peças ao setup
         setup.pecas.set(pecas)
 
         return redirect("meus_setups")
