@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -65,3 +66,72 @@
     </form>
   </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adicionar Placa Mãe</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      label {
+        display: block;
+        margin: 10px 0 5px;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Adicionar Placa Mãe</h1>
+
+    <form method="POST" action="{% url 'add_placa_mae' %}">
+      {% csrf_token %}
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome" required />
+
+      <label for="preco">Preço:</label>
+      <input type="number" id="preco" name="preco" step="0.01" required />
+
+      <label for="chipset">Chipset:</label>
+      <input type="text" id="chipset" name="chipset" required />
+
+      <label for="formato">Formato:</label>
+      <input type="text" id="formato" name="formato" required />
+
+      <button type="submit">Adicionar Placa Mãe</button>
+    </form>
+  </body>
+</html>
+>>>>>>> 0b70f733a5fbdca43ff5f98bde71b74d625c3dbb
