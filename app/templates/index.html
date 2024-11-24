@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -191,3 +192,198 @@
     </footer>
   </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BuildItUp! - Personalize Seu PC</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: #f0f4f8;
+        color: #333;
+        line-height: 1.6;
+        padding: 0;
+      }
+
+      header {
+        background: #1578e3;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .navbar h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      nav a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .banner {
+        background: url("images/pc-setup.jpg") no-repeat center center/cover;
+        height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .banner h2 {
+        color: #fff;
+        font-size: 3rem;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 20px 30px;
+        border-radius: 10px;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .about,
+      .features {
+        margin-top: 40px;
+      }
+
+      .about h2,
+      .features h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+      }
+
+      .about p {
+        font-size: 1.2rem;
+        color: #555;
+        margin-bottom: 20px;
+      }
+
+      .features {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .feature-box {
+        background: #fff;
+        flex: 1;
+        min-width: 30%;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .feature-box:hover {
+        transform: translateY(-5px);
+      }
+
+      .feature-box h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+      }
+
+      .feature-box p {
+        font-size: 1rem;
+        color: #777;
+      }
+
+      footer {
+        background: #1578e3;
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="navbar">
+        <h1>BuildItUp!</h1>
+        <nav>
+          <a href="{%url 'login'%}">Entrar</a>
+          <a href="{%url 'cadastro'%}">Cadastrar</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="banner">
+      <h2>Monte Seu PC Ideal com BuildItUp!</h2>
+    </section>
+
+    <div class="container">
+      <section class="about">
+        <h2>Sobre o Projeto</h2>
+        <p>
+          O BuildItUp! é uma plataforma projetada para ajudar você a
+          personalizar e montar o seu PC dos sonhos. Com uma vasta seleção de
+          componentes, você pode explorar, comparar e selecionar as peças que
+          melhor atendem às suas necessidades.
+        </p>
+      </section>
+
+      <section class="features">
+        <h2>Funcionalidades Principais</h2>
+        <div class="feature-box">
+          <h3>Configuração Fácil</h3>
+          <p>
+            Escolha entre processadores, placas de vídeo, memórias, e muito mais
+            com apenas alguns cliques.
+          </p>
+        </div>
+        <div class="feature-box">
+          <h3>Simulações de Preço</h3>
+          <p>
+            Veja o preço estimado do seu setup antes de finalizar a montagem.
+          </p>
+        </div>
+        <div class="feature-box">
+          <h3>Salve Seus Projetos</h3>
+          <p>
+            Salve seus setups personalizados e acesse-os a qualquer momento.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <p>&copy; 2024 BuildItUp! Todos os direitos reservados.</p>
+    </footer>
+  </body>
+</html>
+>>>>>>> 0b70f733a5fbdca43ff5f98bde71b74d625c3dbb
