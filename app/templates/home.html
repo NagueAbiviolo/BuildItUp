@@ -180,6 +180,9 @@
         background-color: #059669;
       }
     </style>
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
   </head>
   <body>
     <header>
@@ -296,48 +299,66 @@
       let selectedPieceIds = [];
 
       function openModal(componente) {
-        document.getElementById(componente).style.display = "block";
+        const modal = document.getElementById(componente);
+        if (modal) modal.style.display = "block";
       }
 
       function closeModal(componente) {
-        document.getElementById(componente).style.display = "none";
+        const modal = document.getElementById(componente);
+        if (modal) modal.style.display = "none";
       }
 
       function selecionarPeca(componente, nome, preco, id, tdp) {
-        // Desmarcar qualquer peça previamente selecionada
         const radioAnterior = document.querySelector(
           `input[name="pecas_${componente}"]:checked`
         );
 
         if (radioAnterior) {
-          // Desmarcar a peça anterior
-          radioAnterior.checked = false;
           const idAnterior = parseInt(radioAnterior.value);
           selectedPieceIds = selectedPieceIds.filter(
             (pieceId) => pieceId !== idAnterior
           );
-          atualizarSelecao(componente, "Nenhum selecionado"); // Atualiza a seleção para "Nenhum selecionado"
         }
 
-        // Marcar a nova peça como selecionada
         const novoRadio = document.querySelector(
           `input[name="pecas_${componente}"][value="${id}"]`
         );
+
         if (novoRadio) {
           novoRadio.checked = true;
-          selectedPieceIds.push(id); // Adiciona a nova peça ao array
+          selectedPieceIds.push(parseInt(id));
         }
 
-        // Atualizar a interface do usuário
         atualizarSelecao(componente, nome);
         atualizarPrecoTotal();
         atualizarTDP();
         closeModal(componente + "-modal");
       }
 
+      function removerSelecao(componente) {
+        const radioSelecionado = document.querySelector(
+          `input[name="pecas_${componente}"]:checked`
+        );
+
+        if (radioSelecionado) {
+          radioSelecionado.checked = false;
+          const idSelecionado = parseInt(radioSelecionado.value);
+          selectedPieceIds = selectedPieceIds.filter(
+            (pieceId) => pieceId !== idSelecionado
+          );
+          atualizarSelecao(componente, "Nenhum selecionado");
+          atualizarPrecoTotal();
+          atualizarTDP();
+        }
+      }
+
       function atualizarSelecao(componente, pecaNome) {
-        document.getElementById(componente + "-selection-text").textContent =
-          pecaNome;
+        const selectionText = document.getElementById(
+          componente + "-selection-text"
+        );
+        if (selectionText) {
+          selectionText.textContent = pecaNome;
+        }
       }
 
       function atualizarPrecoTotal() {
@@ -345,11 +366,14 @@
         const selectedRadios = document.querySelectorAll(
           "input[type='radio']:checked"
         );
+
         selectedRadios.forEach((radio) => {
-          total += parseFloat(radio.getAttribute("data-price"));
+          const preco = parseFloat(radio.getAttribute("data-price"));
+          if (!isNaN(preco)) total += preco;
         });
-        document.getElementById("total-price-value").textContent =
-          total.toFixed(2);
+
+        const totalPriceElement = document.getElementById("total-price-value");
+        if (totalPriceElement) totalPriceElement.textContent = total.toFixed(2);
       }
 
       function atualizarTDP() {
@@ -357,15 +381,21 @@
         const selectedRadios = document.querySelectorAll(
           "input[type='radio']:checked"
         );
+
         selectedRadios.forEach((radio) => {
-          totalTDP += parseInt(radio.getAttribute("data-tdp"));
+          const tdp = parseInt(radio.getAttribute("data-tdp"));
+          if (!isNaN(tdp)) totalTDP += tdp;
         });
-        document.getElementById("total-tdp-value").textContent = totalTDP;
+
+        const totalTDPElement = document.getElementById("total-tdp-value");
+        if (totalTDPElement) totalTDPElement.textContent = totalTDP;
       }
 
       function prepararEnvio() {
-        document.getElementById("selected-pieces").value =
-          selectedPieceIds.join(",");
+        const selectedPiecesInput = document.getElementById("selected-pieces");
+        if (selectedPiecesInput) {
+          selectedPiecesInput.value = selectedPieceIds.join(",");
+        }
       }
     </script>
   </body>
