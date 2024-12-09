@@ -58,7 +58,6 @@ def logout(request):
 @login_required(login_url="/auth/login/")
 def home(request):
     if request.method == "GET":
-        # Obter peças por categoria
         pecas_por_categoria = {
             "RAM": RAM.objects.all(),
             "HD": HD.objects.all(),
@@ -72,16 +71,13 @@ def home(request):
             "Ventoinha": Ventoinha.objects.all(),
         }
 
-        # Obter o setup do usuário
         setups = Setup.objects.filter(user=request.user)
         setup_atual = setups.first()
 
-        # Calcular o TDP total
         tdp_total = 0
         if setup_atual:
-            tdp_total = setup_atual.tdp_total  # Já calculado previamente
+            tdp_total = setup_atual.tdp_total  
 
-        # Buscar fontes compatíveis
         fontes_compativeis = FonteAlimentacao.objects.filter(
             potencia__gte=tdp_total + 50
         )
@@ -105,13 +101,11 @@ def home(request):
                 {"error": "Nome do setup ou peças não fornecidos."},
             )
 
-        # Converte a string com IDs separados por vírgulas para uma lista de inteiros
         try:
             peca_ids = [int(id) for id in pecas_selecionadas.split(",")]
         except ValueError:
             return render(request, "home.html", {"error": "IDs das peças inválidos."})
 
-        # Busca as peças selecionadas no banco de dados
         pecas = Peca.objects.filter(id__in=peca_ids)
 
         if not pecas.exists():
@@ -121,7 +115,29 @@ def home(request):
                 {"error": "Nenhuma peça encontrada com os IDs fornecidos."},
             )
 
-        # Calcular o preço total e TDP total das peças selecionadas
+        cpu = CPU.objects.filter(id__in=pecas.values_list('id', flat=True)).first()
+        placa_mae = PlacaMae.objects.filter(id__in=pecas.values_list('id', flat=True)).first()
+
+        if cpu and placa_mae and cpu.chipset != placa_mae.chipset:
+            return render(
+            request,
+            "home.html",
+            {
+
+            "error": f"Incompatibilidade entre o chipset da Placa-Mãe ({placa_mae.chipset}) e do CPU ({cpu.chipset}).",
+        },
+    )
+    fonte = FonteAlimentacao.objects.filter(id__in=pecas.values_list("id", flat=True)).first()
+    if fonte and fonte.potencia < tdp_total + 50:
+        return render(
+            request,
+            "home.html",
+            {
+                "error": f"A fonte selecionada ({fonte.nome}) não tem potência suficiente para o TDP total do setup ({tdp_total}W).",
+            },
+        )
+
+        # Calcular preço total e TDP total
         preco_total = pecas.aggregate(total_preco=Sum("preco"))["total_preco"] or 0
         tdp_total = pecas.aggregate(total_tdp=Sum("tdp"))["total_tdp"] or 0
 
@@ -130,12 +146,12 @@ def home(request):
             nome=nome, preco=preco_total, tdp_total=tdp_total, user=request.user
         )
 
-        # Adicionar as peças ao setup
         setup.pecas.set(pecas)
 
         return redirect("meus_setups")
 
     return render(request, "home.html")
+
 
 
 @login_required(login_url="/auth/login/")
@@ -160,17 +176,17 @@ def pecas(request):
         )
     )
 
-    # Aplicar o filtro por componente, se um foi selecionado
+    
     if componente_selecionado:
         pecas = pecas.filter(tipo=componente_selecionado)
 
-    # Ordenar pelo preço
+    
     if order == "desc":
         pecas = pecas.order_by("-preco")
     else:
         pecas = pecas.order_by("preco")
 
-    # Listar os tipos únicos de componentes para o dropdown no template
+    
     tipos_componentes = [
         "RAM",
         "HD",
