@@ -147,12 +147,24 @@
         font-size: 1rem;
         cursor: pointer;
       }
-      .total-price {
-        font-size: 1.5rem;
+      .total-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+      }
+
+      .total-price,
+      .total-tdp {
+        font-size: 2rem;
         font-weight: bold;
-        margin: 30px;
-        text-align: right;
+        margin: 10px;
+        text-align: center;
         color: #334155;
+        background-color: #e2e8f0;
+        padding: 10px;
+        border-radius: 8px;
+        flex: 1;
       }
       .form-setup {
         background-color: #fff;
@@ -160,6 +172,16 @@
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         margin: 30px;
+      }
+      .form-setup h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #10b981;
+      }
+      .form-setup label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
       }
       .form-setup input,
       .form-setup button {
@@ -169,12 +191,16 @@
         border-radius: 8px;
         border: 1px solid #e2e8f0;
       }
+      .form-setup input {
+        font-size: 1rem;
+      }
       .form-setup button {
         background-color: #10b981;
         color: #fff;
         font-weight: bold;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        font-size: 1rem;
       }
       .form-setup button:hover {
         background-color: #059669;
@@ -198,6 +224,29 @@
     </header>
 
     <main>
+      <div class="total-conatiner">
+        <div class="total-price">
+          Total: R$ <span id="total-price-value">0.00</span>
+        </div>
+        <div class="total-tdp">
+          TDP Total: <span id="total-tdp-value">0</span> W
+        </div>
+      </div>
+      <section class="form-setup">
+        <h2>Adicionar um Setup</h2>
+        <form
+          method="POST"
+          action="{% url 'home' %}"
+          onsubmit="prepararEnvio()"
+        >
+          {% csrf_token %}
+          <label for="setup-name">Nome do Setup</label>
+          <input type="text" id="setup-name" name="setup_name" required />
+          <input type="hidden" id="selected-pieces" name="pecas" value="" />
+          <button type="submit">Salvar Setup</button>
+        </form>
+      </section>
+
       <section class="configurator">
         {% for componente, pecas in componentes.items %}
         <div class="component">
@@ -253,46 +302,6 @@
         </div>
         {% endfor %}
       </section>
-
-      <section class="form-setup">
-        <h2>Adicionar um Setup</h2>
-        <form
-          method="POST"
-          action="{% url 'home' %}"
-          onsubmit="prepararEnvio()"
-        >
-          {% csrf_token %}
-          <label for="setup-name">Nome do Setup</label>
-          <input type="text" id="setup-name" name="setup_name" required />
-          <input type="hidden" id="selected-pieces" name="pecas" value="" />
-          <button type="submit">Salvar Setup</button>
-        </form>
-      </section>
-
-      <div class="total-price">
-        Total: R$ <span id="total-price-value">0.00</span>
-      </div>
-      <div class="total-tdp">
-        TDP Total: <span id="total-tdp-value">0</span> W
-      </div>
-
-      <div class="setup-info">
-        {% if setup_atual %}
-
-        <div class="recommended-sources">
-          <h3>Fontes de Alimentação Recomendadas:</h3>
-          <ul>
-            {% for fonte in fontes_compativeis %}
-            <li>{{ fonte.nome }} - {{ fonte.potencia }}W</li>
-            {% empty %}
-            <li>
-              Não há fontes de alimentação compatíveis com o TDP do seu setup.
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-      </div>
     </main>
 
     <script>
