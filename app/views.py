@@ -332,3 +332,58 @@ def excluir_peca(request, peca_id):
 def meus_setups(request):
     setups = Setup.objects.filter(user=request.user)
     return render(request, "meus_setups.html", {"setups": setups})
+
+
+@login_required
+def editar_setup(request, setup_id):
+    setup = get_object_or_404(Setup, id=setup_id, user=request.user)
+
+    if request.method == "POST":
+        nome = request.POST.get("setup_name")
+        pecas_selecionadas = request.POST.get("pecas", "")
+
+        if not nome or not pecas_selecionadas:
+            return render(
+                request,
+                "editar_setup.html",
+                {"setup": setup, "error": "Nome do setup ou peças não fornecidos."},
+            )
+
+        try:
+            peca_ids = [int(id) for id in pecas_selecionadas.split(",")]
+        except ValueError:
+            return render(
+                request,
+                "editar_setup.html",
+                {"setup": setup, "error": "IDs das peças inválidos."},
+            )
+
+        pecas = Peca.objects.filter(id__in=peca_ids)
+        if not pecas.exists():
+            return render(
+                request,
+                "editar_setup.html",
+                {
+                    "setup": setup,
+                    "error": "Nenhuma peça encontrada com os IDs fornecidos.",
+                },
+            )
+
+        setup.nome = nome
+        setup.pecas.set(pecas)
+        setup.save()
+
+        return redirect("meus_setups")
+
+    return render(request, "editar_setup.html", {"setup": setup})
+
+
+@login_required
+def excluir_setup(request, setup_id):
+    setup = get_object_or_404(Setup, id=setup_id, user=request.user)
+
+    if request.method == "POST":
+        setup.delete()
+        return redirect("meus_setups")
+
+    return render(request, "excluir_setup.html", {"setup": setup})

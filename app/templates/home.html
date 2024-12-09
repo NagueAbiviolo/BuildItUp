@@ -1,411 +1,392 @@
-{% load static %}
+{% extends "base.html" %}
+{% load static %} 
+{% block title %}Personalize Seu PC{% endblock %} 
+{% block content %}
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #222;
+  }
+  .configurator {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 30px;
+  }
+  .component {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .component:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
+  .component img {
+    width: 150px;
+    height: auto;
+    margin: 15px 0;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+  }
+  .component button {
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .component .btn-selecionar {
+    background-color: #3b82f6;
+    color: #fff;
+  }
+  .component .btn-selecionar:hover {
+    background-color: #2563eb;
+  }
+  .component .remove-button {
+    background-color: #ef4444;
+    color: #fff;
+  }
+  .component .remove-button:hover {
+    background-color: #b91c1c;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    overflow: auto;
+  }
+  .modal-content {
+    background-color: #f8fafc;
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 15px;
+  }
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  .close {
+    color: #6b7280;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  .close:hover {
+    color: #1f2937;
+  }
+  .modal-body {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  .modal-body label {
+    display: block;
+    margin: 10px 0;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .total-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+  }
 
-<!DOCTYPE html>
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Personalize Seu PC</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
-      rel="stylesheet"
+  .total-price,
+  .total-tdp {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 10px;
+    text-align: center;
+    color: #334155;
+    background-color: #e2e8f0;
+    padding: 10px;
+    border-radius: 8px;
+    flex: 1;
+  }
+  .form-setup {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 30px;
+  }
+  .form-setup h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #10b981;
+  }
+  .form-setup label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+  }
+  .form-setup input,
+  .form-setup button {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  .form-setup input {
+    font-size: 1rem;
+  }
+  .form-setup button {
+    background-color: #10b981;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+  }
+  .form-setup button:hover {
+    background-color: #059669;
+  }
+</style>
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+<div class="total-container">
+  <div class="total-price">
+    Total: R$ <span id="total-price-value">0.00</span>
+  </div>
+  <div class="total-tdp">TDP Total: <span id="total-tdp-value">0</span> W</div>
+</div>
+<section class="form-setup">
+  <h2>Adicionar um Setup</h2>
+  <form method="POST" action="{% url 'home' %}" onsubmit="prepararEnvio()">
+    {% csrf_token %}
+    <label for="setup-name">Nome do Setup</label>
+    <input type="text" id="setup-name" name="setup_name" required />
+    <input type="hidden" id="selected-pieces" name="pecas" value="" />
+    <button type="submit">Salvar Setup</button>
+  </form>
+</section>
+
+<section class="configurator">
+  {% for componente, pecas in componentes.items %}
+  <div class="component">
+    <label>{{ componente }}</label>
+    <img
+      src="{% static 'img/'|add:componente|add:'.jpg' %}"
+      alt="{{ componente }}"
     />
-    <style>
-      body {
-        font-family: "Poppins", sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f9f9f9;
-        color: #222;
-      }
-      .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 30px;
-        background-color: #1e293b;
-        color: #f8fafc;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
-      .navbar h1 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: bold;
-      }
-      .navbar nav a {
-        color: #f8fafc;
-        margin-left: 20px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-        padding: 5px 10px;
-        border-radius: 4px;
-        transition: background-color 0.3s, color 0.3s;
-      }
-      .navbar nav a:hover {
-        background-color: #3b82f6;
-        color: #fff;
-      }
-      .configurator {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-        padding: 30px;
-      }
-      .component {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-      .component:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-      }
-      .component img {
-        width: 150px;
-        height: auto;
-        margin: 15px 0;
-        border-radius: 8px;
-        border: 2px solid #e2e8f0;
-      }
-      .component button {
-        padding: 10px 15px;
-        margin: 5px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-      .component .btn-selecionar {
-        background-color: #3b82f6;
-        color: #fff;
-      }
-      .component .btn-selecionar:hover {
-        background-color: #2563eb;
-      }
-      .component .remove-button {
-        background-color: #ef4444;
-        color: #fff;
-      }
-      .component .remove-button:hover {
-        background-color: #b91c1c;
-      }
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
-        z-index: 1000;
-        overflow: auto;
-      }
-      .modal-content {
-        background-color: #f8fafc;
-        margin: 5% auto;
-        padding: 20px;
-        width: 90%;
-        max-width: 600px;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      }
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #e2e8f0;
-        margin-bottom: 15px;
-      }
-      .modal-header h2 {
-        margin: 0;
-        font-size: 1.25rem;
-      }
-      .close {
-        color: #6b7280;
-        font-size: 24px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: color 0.3s ease;
-      }
-      .close:hover {
-        color: #1f2937;
-      }
-      .modal-body {
-        max-height: 300px;
-        overflow-y: auto;
-        padding: 10px;
-      }
-      .modal-body label {
-        display: block;
-        margin: 10px 0;
-        font-size: 1rem;
-        cursor: pointer;
-      }
-      .total-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 30px;
-      }
+    <span id="{{ componente|lower }}-selection-text">Nenhum selecionado</span>
+    <button
+      class="btn-selecionar"
+      onclick="openModal('{{ componente|lower }}-modal')"
+    >
+      Selecione
+    </button>
+    <button
+      class="remove-button"
+      onclick="removerSelecao('{{ componente|lower }}')"
+    >
+      Remover Seleção
+    </button>
+  </div>
 
-      .total-price,
-      .total-tdp {
-        font-size: 2rem;
-        font-weight: bold;
-        margin: 10px;
-        text-align: center;
-        color: #334155;
-        background-color: #e2e8f0;
-        padding: 10px;
-        border-radius: 8px;
-        flex: 1;
-      }
-      .form-setup {
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        margin: 30px;
-      }
-      .form-setup h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #10b981;
-      }
-      .form-setup label {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #333;
-      }
-      .form-setup input,
-      .form-setup button {
-        width: 100%;
-        padding: 12px;
-        margin: 12px 0;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-      }
-      .form-setup input {
-        font-size: 1rem;
-      }
-      .form-setup button {
-        background-color: #10b981;
-        color: #fff;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        font-size: 1rem;
-      }
-      .form-setup button:hover {
-        background-color: #059669;
-      }
-    </style>
-    {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
-  </head>
-  <body>
-    <header>
-      <div class="navbar">
-        <h1>BuildItUp!</h1>
-        <nav>
-          <a href="{% url 'logout' %}">Sair</a>
-          <a href="#">Sobre o Autor</a>
-          <a href="{% url 'meus_setups' %}">Meus Setups</a>
-          <a href="{% url 'pecas' %}">Peças</a>
-        </nav>
-      </div>
-    </header>
-
-    <main>
-      <div class="total-conatiner">
-        <div class="total-price">
-          Total: R$ <span id="total-price-value">0.00</span>
-        </div>
-        <div class="total-tdp">
-          TDP Total: <span id="total-tdp-value">0</span> W
-        </div>
-      </div>
-      <section class="form-setup">
-        <h2>Adicionar um Setup</h2>
-        <form
-          method="POST"
-          action="{% url 'home' %}"
-          onsubmit="prepararEnvio()"
+  <div id="{{ componente|lower }}-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Selecione um {{ componente }}</h2>
+        <span class="close" onclick="closeModal('{{ componente|lower }}-modal')"
+          >&times;</span
         >
-          {% csrf_token %}
-          <label for="setup-name">Nome do Setup</label>
-          <input type="text" id="setup-name" name="setup_name" required />
-          <input type="hidden" id="selected-pieces" name="pecas" value="" />
-          <button type="submit">Salvar Setup</button>
-        </form>
-      </section>
-
-      <section class="configurator">
-        {% for componente, pecas in componentes.items %}
-        <div class="component">
-          <label>{{ componente }}</label>
-          <img
-            src="{% static 'img/'|add:componente|add:'.jpg' %}"
-            alt="{{ componente }}"
+      </div>
+      <div class="modal-body">
+        {% for peca in pecas %}
+        <label>
+          <input
+            type="radio"
+            id="peca_{{ peca.id }}"
+            name="pecas_{{ componente|lower }}"
+            value="{{ peca.id }}"
+            data-price="{{ peca.preco }}"
+            data-tdp="{{ peca.tdp }}"
+            onchange="selecionarPeca('{{ componente|lower }}', '{{ peca.nome }}', '{{ peca.preco }}', '{{ peca.id }}', '{{ peca.tdp }}')"
           />
-          <span id="{{ componente|lower }}-selection-text"
-            >Nenhum selecionado</span
-          >
-          <button
-            class="btn-selecionar"
-            onclick="openModal('{{ componente|lower }}-modal')"
-          >
-            Selecione
-          </button>
-          <button
-            class="remove-button"
-            onclick="removerSelecao('{{ componente|lower }}')"
-          >
-            Remover Seleção
-          </button>
-        </div>
+          {{ peca.nome }} - R$ {{ peca.preco }} - TDP: {{ peca.tdp }}W
+        </label>
+        {% if componente == "RAM" %}
+        <label for="quantidade_{{ peca.id }}">Quantidade de Pentes:</label>
+        <select
+          id="quantidade_{{ peca.id }}"
+          name="quantidade_{{ peca.id }}"
+          onchange="atualizarQuantidade('{{ peca.id }}')"
+        >
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="4">4</option>
+          <option value="8">8</option>
+        </select>
+        {% endif %} {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</section>
 
-        <div id="{{ componente|lower }}-modal" class="modal">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h2>Selecione um {{ componente }}</h2>
-              <span
-                class="close"
-                onclick="closeModal('{{ componente|lower }}-modal')"
-                >&times;</span
-              >
-            </div>
-            <div class="modal-body">
-              {% for peca in pecas %}
-              <label>
-                <input
-                  type="radio"
-                  id="peca_{{ peca.id }}"
-                  name="pecas_{{ componente|lower }}"
-                  value="{{ peca.id }}"
-                  data-price="{{ peca.preco }}"
-                  data-tdp="{{ peca.tdp }}"
-                  onchange="selecionarPeca('{{ componente|lower }}', '{{ peca.nome }}', '{{ peca.preco }}', '{{ peca.id }}', '{{ peca.tdp }}')"
-                />
-                {{ peca.nome }} - R$ {{ peca.preco }} - TDP: {{ peca.tdp }}W
-              </label>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </section>
-    </main>
+<script>
+  let selectedPieceIds = [];
+  let ramQuantities = {};
 
-    <script>
-      let selectedPieceIds = [];
+  function openModal(componente) {
+    const modal = document.getElementById(componente);
+    if (modal) modal.style.display = "block";
+  }
 
-      function openModal(componente) {
-        const modal = document.getElementById(componente);
-        if (modal) modal.style.display = "block";
+  function closeModal(componente) {
+    const modal = document.getElementById(componente);
+    if (modal) modal.style.display = "none";
+  }
+
+  function selecionarPeca(componente, nome, preco, id, tdp) {
+    const radioAnterior = document.querySelector(
+      `input[name="pecas_${componente}"]:checked`
+    );
+
+    if (radioAnterior) {
+      const idAnterior = parseInt(radioAnterior.value);
+      selectedPieceIds = selectedPieceIds.filter(
+        (pieceId) => pieceId !== idAnterior
+      );
+      if (componente === "ram") {
+        delete ramQuantities[idAnterior];
       }
+    }
 
-      function closeModal(componente) {
-        const modal = document.getElementById(componente);
-        if (modal) modal.style.display = "none";
+    const novoRadio = document.querySelector(
+      `input[name="pecas_${componente}"][value="${id}"]`
+    );
+
+    if (novoRadio) {
+      novoRadio.checked = true;
+      selectedPieceIds.push(parseInt(id));
+      if (componente === "ram") {
+        const quantidade = document.getElementById(`quantidade_${id}`).value;
+        ramQuantities[id] = parseInt(quantidade);
       }
+    }
 
-      function selecionarPeca(componente, nome, preco, id, tdp) {
-        const radioAnterior = document.querySelector(
-          `input[name="pecas_${componente}"]:checked`
-        );
+    atualizarSelecao(componente, nome);
+    atualizarPrecoTotal();
+    atualizarTDP();
+    closeModal(componente + "-modal");
+  }
 
-        if (radioAnterior) {
-          const idAnterior = parseInt(radioAnterior.value);
-          selectedPieceIds = selectedPieceIds.filter(
-            (pieceId) => pieceId !== idAnterior
-          );
-        }
+  function removerSelecao(componente) {
+    const radioSelecionado = document.querySelector(
+      `input[name="pecas_${componente}"]:checked`
+    );
 
-        const novoRadio = document.querySelector(
-          `input[name="pecas_${componente}"][value="${id}"]`
-        );
-
-        if (novoRadio) {
-          novoRadio.checked = true;
-          selectedPieceIds.push(parseInt(id));
-        }
-
-        atualizarSelecao(componente, nome);
-        atualizarPrecoTotal();
-        atualizarTDP();
-        closeModal(componente + "-modal");
+    if (radioSelecionado) {
+      radioSelecionado.checked = false;
+      const idSelecionado = parseInt(radioSelecionado.value);
+      selectedPieceIds = selectedPieceIds.filter(
+        (pieceId) => pieceId !== idSelecionado
+      );
+      if (componente === "ram") {
+        delete ramQuantities[idSelecionado];
       }
+      atualizarSelecao(componente, "Nenhum selecionado");
+      atualizarPrecoTotal();
+      atualizarTDP();
+    }
+  }
 
-      function removerSelecao(componente) {
-        const radioSelecionado = document.querySelector(
-          `input[name="pecas_${componente}"]:checked`
-        );
+  function atualizarSelecao(componente, pecaNome) {
+    const selectionText = document.getElementById(
+      componente + "-selection-text"
+    );
+    if (selectionText) {
+      selectionText.textContent = pecaNome;
+    }
+  }
 
-        if (radioSelecionado) {
-          radioSelecionado.checked = false;
-          const idSelecionado = parseInt(radioSelecionado.value);
-          selectedPieceIds = selectedPieceIds.filter(
-            (pieceId) => pieceId !== idSelecionado
-          );
-          atualizarSelecao(componente, "Nenhum selecionado");
-          atualizarPrecoTotal();
-          atualizarTDP();
-        }
-      }
+  function atualizarPrecoTotal() {
+    let total = 0;
+    const selectedRadios = document.querySelectorAll(
+      "input[type='radio']:checked"
+    );
 
-      function atualizarSelecao(componente, pecaNome) {
-        const selectionText = document.getElementById(
-          componente + "-selection-text"
-        );
-        if (selectionText) {
-          selectionText.textContent = pecaNome;
-        }
-      }
-
-      function atualizarPrecoTotal() {
-        let total = 0;
-        const selectedRadios = document.querySelectorAll(
-          "input[type='radio']:checked"
-        );
-
-        selectedRadios.forEach((radio) => {
-          const preco = parseFloat(radio.getAttribute("data-price"));
-          if (!isNaN(preco)) total += preco;
-        });
-
-        const totalPriceElement = document.getElementById("total-price-value");
-        if (totalPriceElement) totalPriceElement.textContent = total.toFixed(2);
-      }
-
-      function atualizarTDP() {
-        let totalTDP = 0;
-        const selectedRadios = document.querySelectorAll(
-          "input[type='radio']:checked"
-        );
-
-        selectedRadios.forEach((radio) => {
-          const tdp = parseInt(radio.getAttribute("data-tdp"));
-          if (!isNaN(tdp)) totalTDP += tdp;
-        });
-
-        const totalTDPElement = document.getElementById("total-tdp-value");
-        if (totalTDPElement) totalTDPElement.textContent = totalTDP;
-      }
-
-      function prepararEnvio() {
-        const selectedPiecesInput = document.getElementById("selected-pieces");
-        if (selectedPiecesInput) {
-          selectedPiecesInput.value = selectedPieceIds.join(",");
+    selectedRadios.forEach((radio) => {
+      const preco = parseFloat(radio.getAttribute("data-price"));
+      const id = parseInt(radio.value);
+      if (!isNaN(preco)) {
+        if (ramQuantities[id]) {
+          total += preco * ramQuantities[id];
+        } else {
+          total += preco;
         }
       }
-    </script>
-  </body>
-</html>
+    });
+
+    const totalPriceElement = document.getElementById("total-price-value");
+    if (totalPriceElement) totalPriceElement.textContent = total.toFixed(2);
+  }
+
+  function atualizarTDP() {
+    let totalTDP = 0;
+    const selectedRadios = document.querySelectorAll(
+      "input[type='radio']:checked"
+    );
+
+    selectedRadios.forEach((radio) => {
+      const tdp = parseInt(radio.getAttribute("data-tdp"));
+      const id = parseInt(radio.value);
+      if (!isNaN(tdp)) {
+        if (ramQuantities[id]) {
+          totalTDP += tdp * ramQuantities[id];
+        } else {
+          totalTDP += tdp;
+        }
+      }
+    });
+
+    const totalTDPElement = document.getElementById("total-tdp-value");
+    if (totalTDPElement) totalTDPElement.textContent = totalTDP;
+  }
+
+  function atualizarQuantidade(id) {
+    const quantidade = document.getElementById(`quantidade_${id}`).value;
+    ramQuantities[id] = parseInt(quantidade);
+    atualizarPrecoTotal();
+    atualizarTDP();
+  }
+
+  function prepararEnvio() {
+    const selectedPiecesInput = document.getElementById("selected-pieces");
+    if (selectedPiecesInput) {
+      selectedPiecesInput.value = selectedPieceIds.join(",");
+    }
+  }
+</script>
+{% endblock %}
