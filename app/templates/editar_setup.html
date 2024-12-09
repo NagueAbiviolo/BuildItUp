@@ -1,0 +1,26 @@
+{% extends "base.html" %} 
+{% block title %}Editar Setup{% endblock %} 
+{% block content %}
+<div class="container">
+  <h1>Editar Setup</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="setup-name">Nome do Setup</label>
+    <input
+      type="text"
+      id="setup-name"
+      name="setup_name"
+      value="{{ setup.nome }}"
+      required
+    />
+    <input
+      type="hidden"
+      id="selected-pieces"
+      name="pecas"
+      value="{% for peca in setup.pecas.all %}{{ peca.id }},{% endfor %}"
+    />
+    <button type="submit">Salvar Setup</button>
+  </form>
+  <a href="{% url 'meus_setups' %}">Voltar</a>
+</div>
+{% endblock %}

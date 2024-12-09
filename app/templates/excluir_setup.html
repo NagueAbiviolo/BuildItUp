@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Excluir Setup{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Excluir Setup</h1>
+  <p>Tem certeza de que deseja excluir o setup "{{ setup.nome }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Excluir</button>
+  </form>
+  <a href="{% url 'meus_setups' %}">Cancelar</a>
+</div>
+{% endblock %}

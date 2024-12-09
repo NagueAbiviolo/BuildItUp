@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}BuildItUp{% endblock %}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #222;
+        overflow-x: hidden; /* Evita overflow horizontal */
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 30px;
+        background-color: #1e293b;
+        color: #f8fafc;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        height: 80px; /* Aumenta a altura do header */
+      }
+      .navbar h1 {
+        margin: 0;
+        font-size: 2rem; /* Aumenta o tamanho da fonte do título */
+        font-weight: bold;
+      }
+      .navbar nav {
+        display: flex;
+        gap: 20px;
+      }
+      .navbar nav a {
+        color: #f8fafc;
+        text-decoration: none;
+        font-size: 1rem; /* Aumenta o tamanho da fonte dos links */
+        font-weight: 500;
+        padding: 10px 15px; /* Aumenta o padding dos links */
+        border-radius: 4px;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      .navbar nav a:hover {
+        background-color: #3b82f6;
+        color: #fff;
+      }
+      main {
+        padding-top: 100px; /* Espaço para o header fixo */
+        max-width: 100%; /* Garante que o conteúdo não ultrapasse o viewport */
+        overflow-x: hidden; /* Evita overflow horizontal no conteúdo */
+      }
+    </style>
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <header>
+      <div class="navbar">
+        <h1>BuildItUp!</h1>
+        <nav>
+          <a href="{% url 'home' %}">Home</a>
+          <a href="{% url 'meus_setups' %}">Meus Setups</a>
+          <a href="{% url 'pecas' %}">Peças</a>
+          <a href="{% url 'logout' %}">Sair</a>
+        </nav>
+      </div>
+    </header>
+    <main>{% block content %}{% endblock %}</main>
+  </body>
+</html>

@@ -143,4 +143,6 @@ urlpatterns = [
         {"model": Ventoinha, "template_name": "editar_peca.html"},
         name="editar_ventoinha",
     ),
+    path("editar_setup/<int:setup_id>/", views.editar_setup, name="editar_setup"),
+    path("excluir_setup/<int:setup_id>/", views.excluir_setup, name="excluir_setup"),
 ]
