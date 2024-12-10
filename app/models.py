@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Sum
 
 
 class Peca(models.Model):
@@ -47,10 +46,10 @@ class GPU(Peca):
 class CPU(Peca):
     nucleos = models.IntegerField()
     clock = models.FloatField()
-    chipset = models.CharField(max_length=100, null=True)
+    socket = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return f"{self.nome} - {self.nucleos} Núcleos - {self.clock}GHz"
+        return f"{self.nome} - {self.nucleos} Núcleos - {self.clock}GHz - Socket {self.socket}"
 
 
 class FonteAlimentacao(Peca):
@@ -65,10 +64,10 @@ class FonteAlimentacao(Peca):
 
 class PlacaMae(Peca):
     formato = models.CharField(max_length=50)
-    chipset = models.CharField(max_length=100)
+    socket = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.nome} - {self.formato} - {self.chipset}"
+        return f"{self.nome} - {self.formato} - Socket {self.socket}"
 
 
 class Cooler(Peca):
