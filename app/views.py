@@ -157,12 +157,12 @@ def home(request):
         placa_mae = PlacaMae.objects.filter(
             id__in=pecas.values_list("id", flat=True)
         ).first()
-        if cpu and placa_mae and cpu.chipset != placa_mae.chipset:
+        if cpu and placa_mae and cpu.socket != placa_mae.socket:
             return render(
                 request,
                 "home.html",
                 {
-                    "error": f"Incompatibilidade entre o chipset da Placa-Mãe ({placa_mae.chipset}) e do CPU ({cpu.chipset}).",
+                    "error": f"Incompatibilidade entre o socket da Placa-Mãe ({placa_mae.socket}) e do CPU ({cpu.socket}).",
                     "componentes": {
                         "RAM": RAM.objects.all(),
                         "HD": HD.objects.all(),
