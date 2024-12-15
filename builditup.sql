@@ -5,7 +5,7 @@
 -- Dumped from database version 17rc1
 -- Dumped by pg_dump version 17rc1
 
--- Started on 2024-12-10 08:53:48
+-- Started on 2024-12-15 15:19:29
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -753,10 +753,10 @@ INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (128, 'Cooler Master S
 INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (129, 'NZXT Aer RGB 2', 179.99, 1);
 INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (130, 'Be Quiet! Silent Wings 3', 129.99, 1);
 INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (131, 'Thermaltake Riing Plus 12 RGB', 199.99, 1);
-INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (132, 'Arctic P12 PWM', 79.99, 1);
 INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (133, 'Phanteks PH-F120MP', 119.99, 1);
 INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (134, 'Deepcool RF120M', 89.99, 1);
 INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (135, 'Antec Prizm 120 ARGB', 109.99, 1);
+INSERT INTO public.app_peca (id, nome, preco, tdp) VALUES (132, 'Arctic P12 PWM', 79.99, 1);
 
 
 --
@@ -801,7 +801,6 @@ INSERT INTO public.app_ram (peca_ptr_id, gb, mhz) VALUES (45, 16, 3600);
 -- Data for Name: app_setup; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.app_setup (id, nome, preco, user_id, tdp_total) VALUES (33, 'Super Blaster', 12079.90, 1, 316);
 
 
 --
@@ -810,16 +809,6 @@ INSERT INTO public.app_setup (id, nome, preco, user_id, tdp_total) VALUES (33, '
 -- Data for Name: app_setup_pecas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (98, 33, 97);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (99, 33, 98);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (100, 33, 121);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (101, 33, 36);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (102, 33, 132);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (103, 33, 72);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (104, 33, 79);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (105, 33, 114);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (106, 33, 57);
-INSERT INTO public.app_setup_pecas (id, setup_id, peca_id) VALUES (107, 33, 90);
 
 
 --
@@ -852,10 +841,10 @@ INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (128, 120, 1
 INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (129, 120, 1500);
 INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (130, 120, 1450);
 INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (131, 120, 1500);
-INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (132, 120, 1800);
 INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (133, 120, 1600);
 INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (134, 120, 1500);
 INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (135, 120, 2000);
+INSERT INTO public.app_ventoinha (peca_ptr_id, tamanho, rpm) VALUES (132, 120, 1800);
 
 
 --
@@ -960,9 +949,7 @@ INSERT INTO public.auth_permission (id, name, content_type_id, codename) VALUES 
 -- Data for Name: auth_user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) VALUES (2, 'pbkdf2_sha256$870000$TVPawYQC5g5ABFT5frTcv9$xLEX2PLPKzeoEFuCtgpeDhFqwCSOBzRQAqRSAfho7pY=', '2024-11-23 19:39:58.381114-03', false, 'nague', '', '', 'naguemagalhaes@gmail.com', false, true, '2024-11-16 18:06:37.87514-03');
-INSERT INTO public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) VALUES (3, 'pbkdf2_sha256$870000$AjKafKUmKMmakFgOCB6s6q$wMh/e/ROB5l+3KDpfTVgjJynWE5Sekw1vGCDTX6Q7io=', '2024-12-09 13:15:06.835254-03', false, 'user', '', '', 'user@gmail.com', false, true, '2024-12-09 13:14:59.592667-03');
-INSERT INTO public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) VALUES (1, 'pbkdf2_sha256$870000$dbAZnfwpboHWPpvOZdqPm5$SowWfws1KnbJaHVDvvsGrOxjRT2iKlecdEYMkuIRgKA=', '2024-12-10 08:23:08.554748-03', true, 'admin', '', '', '', true, true, '2024-10-29 19:22:46.099955-03');
+INSERT INTO public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) VALUES (1, 'pbkdf2_sha256$870000$dbAZnfwpboHWPpvOZdqPm5$SowWfws1KnbJaHVDvvsGrOxjRT2iKlecdEYMkuIRgKA=', '2024-12-15 15:12:27.038589-03', true, 'admin', '', '', '', true, true, '2024-10-29 19:22:46.099955-03');
 
 
 --
@@ -1057,6 +1044,13 @@ INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, ac
 INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (68, '2024-12-10 08:32:52.72997-03', '33', 'ARCTIC F12 - 120mm - 1350RPM', 3, '', 17, 1);
 INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (69, '2024-12-10 08:32:52.72997-03', '32', 'Noctua NF-A12x25 - 120mm - 2000RPM', 3, '', 17, 1);
 INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (70, '2024-12-10 08:32:52.72997-03', '31', 'Corsair ML120 Pro - 120mm - 2400RPM', 3, '', 17, 1);
+INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (71, '2024-12-15 15:13:02.436369-03', '42', 'SAAA - teste', 3, '', 18, 1);
+INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (72, '2024-12-15 15:13:02.436369-03', '41', 's - teste', 3, '', 18, 1);
+INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (73, '2024-12-15 15:13:02.436369-03', '40', 'ram - teste', 3, '', 18, 1);
+INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (74, '2024-12-15 15:13:02.437368-03', '39', 'ffffg - teste', 3, '', 18, 1);
+INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (75, '2024-12-15 15:13:26.878427-03', '2', 'nague', 3, '', 4, 1);
+INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (76, '2024-12-15 15:13:26.878427-03', '4', 'teste', 3, '', 4, 1);
+INSERT INTO public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) VALUES (77, '2024-12-15 15:13:26.878427-03', '3', 'user', 3, '', 4, 1);
 
 
 --
@@ -1128,7 +1122,7 @@ INSERT INTO public.django_migrations (id, app, name, applied) VALUES (27, 'app',
 
 INSERT INTO public.django_session (session_key, session_data, expire_date) VALUES ('fhgtsllbkkfxxs2h8wbq565iun7ubkg7', '.eJxVjEEOwiAQRe_C2pACBcSl-56BDMyMVA0kpV0Z765NutDtf-_9l4iwrSVunZY4o7gIJU6_W4L8oLoDvEO9NZlbXZc5yV2RB-1yakjP6-H-HRTo5VsDK4-B0DIqh9lZE5TJgBCCJgeQkIAUmPNokHXWgbwdCHhgwxpHL94fHEY5UA:1t5vTv:owQPPjN36LIvMQAC36NnPbouV9_mge6PU2lstJhw8Mo', '2024-11-12 20:18:35.849886-03');
 INSERT INTO public.django_session (session_key, session_data, expire_date) VALUES ('oojf37izgty2o3qbhregvlf4uoxnjcu9', '.eJxVjEEOwiAQRe_C2pACBcSl-56BDMyMVA0kpV0Z765NutDtf-_9l4iwrSVunZY4o7gIJU6_W4L8oLoDvEO9NZlbXZc5yV2RB-1yakjP6-H-HRTo5VsDK4-B0DIqh9lZE5TJgBCCJgeQkIAUmPNokHXWgbwdCHhgwxpHL94fHEY5UA:1tEynz:cJZGNE-zbAAGQbcuvKx0lBmOkJhmKE3Zd2TtR5BeIog', '2024-12-07 19:40:43.400682-03');
-INSERT INTO public.django_session (session_key, session_data, expire_date) VALUES ('oyd45pjpfd4pufa8av7glwgtxsyrhmur', '.eJxVjEEOwiAQRe_C2pACBcSl-56BDMyMVA0kpV0Z765NutDtf-_9l4iwrSVunZY4o7gIJU6_W4L8oLoDvEO9NZlbXZc5yV2RB-1yakjP6-H-HRTo5VsDK4-B0DIqh9lZE5TJgBCCJgeQkIAUmPNokHXWgbwdCHhgwxpHL94fHEY5UA:1tKyKa:iNQLtiKp5YjcRB1VOYQwW-xB_J9UvBFGlqMrvNuEMgM', '2024-12-24 08:23:08.561747-03');
+INSERT INTO public.django_session (session_key, session_data, expire_date) VALUES ('hjhohphkem2ccm33qmuwq1oyd4up2crj', '.eJxVjEEOwiAQRe_C2pACBcSl-56BDMyMVA0kpV0Z765NutDtf-_9l4iwrSVunZY4o7gIJU6_W4L8oLoDvEO9NZlbXZc5yV2RB-1yakjP6-H-HRTo5VsDK4-B0DIqh9lZE5TJgBCCJgeQkIAUmPNokHXWgbwdCHhgwxpHL94fHEY5UA:1tMt6R:6tevVo-0GaUb5WPzCeA8j4_Rzp6xqnLDvD7d94gi6Ak', '2024-12-29 15:12:27.039733-03');
 
 
 --
@@ -1146,7 +1140,7 @@ SELECT pg_catalog.setval('public.app_peca_id_seq', 135, true);
 -- Name: app_setup_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_setup_id_seq', 33, true);
+SELECT pg_catalog.setval('public.app_setup_id_seq', 43, true);
 
 
 --
@@ -1155,7 +1149,7 @@ SELECT pg_catalog.setval('public.app_setup_id_seq', 33, true);
 -- Name: app_setup_pecas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_setup_pecas_id_seq', 107, true);
+SELECT pg_catalog.setval('public.app_setup_pecas_id_seq', 130, true);
 
 
 --
@@ -1200,7 +1194,7 @@ SELECT pg_catalog.setval('public.auth_user_groups_id_seq', 1, false);
 -- Name: auth_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.auth_user_id_seq', 3, true);
+SELECT pg_catalog.setval('public.auth_user_id_seq', 4, true);
 
 
 --
@@ -1218,7 +1212,7 @@ SELECT pg_catalog.setval('public.auth_user_user_permissions_id_seq', 1, false);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 70, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 77, true);
 
 
 --
@@ -1844,7 +1838,7 @@ ALTER TABLE ONLY public.django_admin_log
     ADD CONSTRAINT django_admin_log_user_id_c564eba6_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES public.auth_user(id) DEFERRABLE INITIALLY DEFERRED;
 
 
--- Completed on 2024-12-10 08:53:48
+-- Completed on 2024-12-15 15:19:30
 
 --
 -- PostgreSQL database dump complete
