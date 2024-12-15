@@ -108,28 +108,19 @@ def home(request):
                 },
             )
 
-        try:
-            peca_ids = [int(id) for id in pecas_selecionadas.split(",")]
-        except ValueError:
-            return render(
-                request,
-                "home.html",
-                {
-                    "error": "IDs das peças inválidos.",
-                    "componentes": {
-                        "RAM": RAM.objects.all(),
-                        "HD": HD.objects.all(),
-                        "SSD": SSD.objects.all(),
-                        "GPU": GPU.objects.all(),
-                        "CPU": CPU.objects.all(),
-                        "Fonte de Alimentacao": FonteAlimentacao.objects.all(),
-                        "Placa Mae": PlacaMae.objects.all(),
-                        "Cooler": Cooler.objects.all(),
-                        "Gabinete": Gabinete.objects.all(),
-                        "Ventoinha": Ventoinha.objects.all(),
-                    },
-                },
-            )
+        pecas_com_quantidades = pecas_selecionadas.split(",")
+        peca_ids = []
+        ram_quantities = {}
+
+        for peca in pecas_com_quantidades:
+            if ":" in peca:
+                peca_id, quantidade = peca.split(":")
+                peca_id = int(peca_id)
+                quantidade = int(quantidade)
+                ram_quantities[peca_id] = quantidade
+            else:
+                peca_id = int(peca)
+            peca_ids.append(peca_id)
 
         pecas = Peca.objects.filter(id__in=peca_ids)
         if not pecas.exists():
@@ -152,6 +143,14 @@ def home(request):
                     },
                 },
             )
+
+        preco_total = 0
+        tdp_total = 0
+
+        for peca in pecas:
+            quantidade = ram_quantities.get(peca.id, 1)
+            preco_total += peca.preco * quantidade
+            tdp_total += peca.tdp * quantidade
 
         cpu = CPU.objects.filter(id__in=pecas.values_list("id", flat=True)).first()
         placa_mae = PlacaMae.objects.filter(
@@ -177,9 +176,6 @@ def home(request):
                     },
                 },
             )
-
-        preco_total = pecas.aggregate(total_preco=Sum("preco"))["total_preco"] or 0
-        tdp_total = pecas.aggregate(total_tdp=Sum("tdp"))["total_tdp"] or 0
 
         fonte = FonteAlimentacao.objects.filter(
             id__in=pecas.values_list("id", flat=True)
@@ -331,46 +327,40 @@ def excluir_peca(request, peca_id):
 @login_required(login_url="/auth/login/")
 def meus_setups(request):
     setups = Setup.objects.filter(user=request.user)
-    return render(request, "meus_setups.html", {"setups": setups})
+    setups_com_quantidades = []
+
+    for setup in setups:
+        quantidades = {}
+        for peca in setup.pecas.all():
+            if isinstance(peca, RAM):
+                quantidade = setup.pecas.filter(id=peca.id).count()
+                quantidades[peca.id] = quantidade
+        setups_com_quantidades.append((setup, quantidades))
+
+    context = {
+        "setups_com_quantidades": setups_com_quantidades,
+    }
+    return render(request, "meus_setups.html", context)
 
 
-@login_required
+@login_required(login_url="/auth/login/")
 def editar_setup(request, setup_id):
     setup = get_object_or_404(Setup, id=setup_id, user=request.user)
 
     if request.method == "POST":
         nome = request.POST.get("setup_name")
-        pecas_selecionadas = request.POST.get("pecas", "")
 
-        if not nome or not pecas_selecionadas:
-            return render(
-                request,
-                "editar_setup.html",
-                {"setup": setup, "error": "Nome do setup ou peças não fornecidos."},
-            )
-
-        try:
-            peca_ids = [int(id) for id in pecas_selecionadas.split(",")]
-        except ValueError:
-            return render(
-                request,
-                "editar_setup.html",
-                {"setup": setup, "error": "IDs das peças inválidos."},
-            )
-
-        pecas = Peca.objects.filter(id__in=peca_ids)
-        if not pecas.exists():
+        if not nome:
             return render(
                 request,
                 "editar_setup.html",
                 {
                     "setup": setup,
-                    "error": "Nenhuma peça encontrada com os IDs fornecidos.",
+                    "error": "Nome do setup não fornecido.",
                 },
             )
 
         setup.nome = nome
-        setup.pecas.set(pecas)
         setup.save()
 
         return redirect("meus_setups")

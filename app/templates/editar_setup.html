@@ -1,6 +1,48 @@
-{% extends "base.html" %} 
-{% block title %}Editar Setup{% endblock %} 
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Editar Setup{% endblock %}
 {% block content %}
+<style>
+  .form-setup {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 30px;
+  }
+  .form-setup h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #10b981;
+  }
+  .form-setup label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+  }
+  .form-setup input,
+  .form-setup button {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  .form-setup input {
+    font-size: 1rem;
+  }
+  .form-setup button {
+    background-color: #10b981;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+  }
+  .form-setup button:hover {
+    background-color: #059669;
+  }
+</style>
 <div class="container">
   <h1>Editar Setup</h1>
   <form method="post">
@@ -12,12 +54,6 @@
       name="setup_name"
       value="{{ setup.nome }}"
       required
-    />
-    <input
-      type="hidden"
-      id="selected-pieces"
-      name="pecas"
-      value="{% for peca in setup.pecas.all %}{{ peca.id }},{% endfor %}"
     />
     <button type="submit">Salvar Setup</button>
   </form>

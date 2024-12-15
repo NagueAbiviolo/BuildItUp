@@ -26,8 +26,9 @@
       header {
         background: #1578e3;
         color: white;
-        padding: 20px;
+        padding: 20px 0;
         text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
       .navbar {
@@ -36,6 +37,7 @@
         align-items: center;
         max-width: 1100px;
         margin: 0 auto;
+        padding: 0 20px;
       }
 
       .navbar h1 {
@@ -46,7 +48,7 @@
       nav a {
         color: white;
         text-decoration: none;
-        padding: 10px 15px;
+        padding: 10px 20px;
         border-radius: 5px;
         transition: background-color 0.3s;
       }
@@ -57,11 +59,22 @@
 
       .banner {
         background: url("images/pc-setup.jpg") no-repeat center center/cover;
-        height: 60vh;
+        height: 70vh;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
+        position: relative;
+      }
+
+      .banner::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
       }
 
       .banner h2 {
@@ -71,12 +84,13 @@
         background: rgba(0, 0, 0, 0.6);
         padding: 20px 30px;
         border-radius: 10px;
+        z-index: 1;
       }
 
       .container {
         max-width: 1100px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 40px 20px;
       }
 
       .about,
@@ -86,40 +100,52 @@
 
       .about h2,
       .features h2 {
-        font-size: 2rem;
+        font-size: 2.5rem;
         margin-bottom: 20px;
+        text-align: center;
+        color: #1578e3;
       }
 
       .about p {
         font-size: 1.2rem;
         color: #555;
         margin-bottom: 20px;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
       }
 
       .features {
         display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 20px;
+        width: 100%;
       }
 
       .feature-box {
         background: #fff;
-        flex: 1;
-        min-width: 30%;
-        padding: 20px;
+        padding: 30px;
         border-radius: 10px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s;
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-align: center;
       }
 
       .feature-box:hover {
         transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
       }
 
       .feature-box h3 {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         margin-bottom: 15px;
+        color: #1578e3;
       }
 
       .feature-box p {
@@ -127,22 +153,37 @@
         color: #777;
       }
 
+      .feature-box i {
+        font-size: 3rem;
+        color: #1578e3;
+        margin-bottom: 15px;
+      }
+
       footer {
         background: #1578e3;
         color: #fff;
         text-align: center;
-        padding: 10px 0;
+        padding: 20px 0;
         margin-top: 30px;
+        box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      footer p {
+        margin: 0;
       }
     </style>
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <header>
       <div class="navbar">
         <h1>BuildItUp!</h1>
         <nav>
-          <a href="{%url 'login'%}">Entrar</a>
-          <a href="{%url 'cadastro'%}">Cadastrar</a>
+          <a href="{% url 'login' %}">Entrar</a>
+          <a href="{% url 'cadastro' %}">Cadastrar</a>
         </nav>
       </div>
     </header>
@@ -164,24 +205,29 @@
 
       <section class="features">
         <h2>Funcionalidades Principais</h2>
-        <div class="feature-box">
-          <h3>Configuração Fácil</h3>
-          <p>
-            Escolha entre processadores, placas de vídeo, memórias, e muito mais
-            com apenas alguns cliques.
-          </p>
-        </div>
-        <div class="feature-box">
-          <h3>Simulações de Preço</h3>
-          <p>
-            Veja o preço estimado do seu setup antes de finalizar a montagem.
-          </p>
-        </div>
-        <div class="feature-box">
-          <h3>Salve Seus Projetos</h3>
-          <p>
-            Salve seus setups personalizados e acesse-os a qualquer momento.
-          </p>
+        <div class="features-grid">
+          <div class="feature-box">
+            <i class="fas fa-cogs"></i>
+            <h3>Configuração Fácil</h3>
+            <p>
+              Escolha entre processadores, placas de vídeo, memórias, e muito
+              mais com apenas alguns cliques.
+            </p>
+          </div>
+          <div class="feature-box">
+            <i class="fas fa-dollar-sign"></i>
+            <h3>Simulações de Preço</h3>
+            <p>
+              Veja o preço estimado do seu setup antes de finalizar a montagem.
+            </p>
+          </div>
+          <div class="feature-box">
+            <i class="fas fa-save"></i>
+            <h3>Salve Seus Projetos</h3>
+            <p>
+              Salve seus setups personalizados e acesse-os a qualquer momento.
+            </p>
+          </div>
         </div>
       </section>
     </div>
