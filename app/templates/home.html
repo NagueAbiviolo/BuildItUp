@@ -255,7 +255,7 @@
 </section>
 
 <script>
-  let selectedPieceIds = [];
+  let selectedPieceIds = {};
   let ramQuantities = {};
 
   function openModal(componente) {
@@ -275,11 +275,12 @@
 
     if (radioAnterior) {
       const idAnterior = parseInt(radioAnterior.value);
-      selectedPieceIds = selectedPieceIds.filter(
-        (pieceId) => pieceId !== idAnterior
-      );
-      if (componente === "ram") {
-        delete ramQuantities[idAnterior];
+      if (selectedPieceIds[componente] === idAnterior) {
+        delete selectedPieceIds[componente];
+        if (componente === "ram") {
+          delete ramQuantities[idAnterior];
+        }
+        radioAnterior.checked = false; // Desmarcar a peça anterior
       }
     }
 
@@ -289,7 +290,7 @@
 
     if (novoRadio) {
       novoRadio.checked = true;
-      selectedPieceIds.push(parseInt(id));
+      selectedPieceIds[componente] = parseInt(id);
       if (componente === "ram") {
         const quantidade = document.getElementById(`quantidade_${id}`).value;
         ramQuantities[id] = parseInt(quantidade);
@@ -310,9 +311,7 @@
     if (radioSelecionado) {
       radioSelecionado.checked = false;
       const idSelecionado = parseInt(radioSelecionado.value);
-      selectedPieceIds = selectedPieceIds.filter(
-        (pieceId) => pieceId !== idSelecionado
-      );
+      delete selectedPieceIds[componente];
       if (componente === "ram") {
         delete ramQuantities[idSelecionado];
       }
@@ -333,13 +332,9 @@
 
   function atualizarPrecoTotal() {
     let total = 0;
-    const selectedRadios = document.querySelectorAll(
-      "input[type='radio']:checked"
-    );
-
-    selectedRadios.forEach((radio) => {
+    for (const id of Object.values(selectedPieceIds)) {
+      const radio = document.querySelector(`input[value="${id}"]`);
       const preco = parseFloat(radio.getAttribute("data-price"));
-      const id = parseInt(radio.value);
       if (!isNaN(preco)) {
         if (ramQuantities[id]) {
           total += preco * ramQuantities[id];
@@ -347,7 +342,7 @@
           total += preco;
         }
       }
-    });
+    }
 
     const totalPriceElement = document.getElementById("total-price-value");
     if (totalPriceElement) totalPriceElement.textContent = total.toFixed(2);
@@ -355,13 +350,9 @@
 
   function atualizarTDP() {
     let totalTDP = 0;
-    const selectedRadios = document.querySelectorAll(
-      "input[type='radio']:checked"
-    );
-
-    selectedRadios.forEach((radio) => {
+    for (const id of Object.values(selectedPieceIds)) {
+      const radio = document.querySelector(`input[value="${id}"]`);
       const tdp = parseInt(radio.getAttribute("data-tdp"));
-      const id = parseInt(radio.value);
       if (!isNaN(tdp)) {
         if (ramQuantities[id]) {
           totalTDP += tdp * ramQuantities[id];
@@ -369,7 +360,7 @@
           totalTDP += tdp;
         }
       }
-    });
+    }
 
     const totalTDPElement = document.getElementById("total-tdp-value");
     if (totalTDPElement) totalTDPElement.textContent = totalTDP;
@@ -385,7 +376,7 @@
   function prepararEnvio() {
     const selectedPiecesInput = document.getElementById("selected-pieces");
     if (selectedPiecesInput) {
-      selectedPiecesInput.value = selectedPieceIds.join(",");
+      selectedPiecesInput.value = Object.values(selectedPieceIds).join(",");
     }
   }
 </script>

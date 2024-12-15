@@ -1,5 +1,5 @@
-{% extends "base.html" %} 
-{% block title %}Meus Setups{% endblock %} 
+{% extends "base.html" %}
+{% block title %}Meus Setups{% endblock %}
 {% block content %}
 <style>
   .setups-list {
@@ -70,12 +70,17 @@
   }
 </style>
 <section class="setups-list">
-  {% for setup in setups %}
+  {% for setup, quantidades in setups_com_quantidades %}
   <div class="setup-card">
     <h3>{{ setup.nome }}</h3>
     <ul>
       {% for peca in setup.pecas.all %}
-      <li>{{ peca.nome }} - R$ {{ peca.preco }}</li>
+      <li>
+        {{ peca.nome }} - R$ {{ peca.preco }}
+        {% if peca.tipo == 'RAM' %}
+        (Quantidade: {{ quantidades|default_if_none:peca.id }})
+        {% endif %}
+      </li>
       {% endfor %}
     </ul>
     <div class="preco">Total: R$ {{ setup.preco }}</div>
